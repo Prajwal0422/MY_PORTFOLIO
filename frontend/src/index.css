@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Color Palette - Dark Futuristic AI Storm */
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #0a0a0f;
+  --color-electric-blue: #00d4ff;
+  --color-electric-blue-dark: #0099cc;
+  --color-silver: #c0c0c0;
+  --color-silver-light: #e8e8e8;
+  --color-cyan-glow: #00ffff;
+  --color-deep-blue: #0a1628;
+  --color-storm-blue: #1a2942;
+  
+  /* Typography */
+  --font-heading: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  background: var(--color-bg-primary);
+  color: var(--color-silver-light);
+  font-family: var(--font-body);
+  cursor: none;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-electric-blue);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-cyan-glow);
+}
+
+/* Typography Utilities */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Glow Effects */
+.glow-blue {
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.8),
+               0 0 40px rgba(0, 212, 255, 0.5),
+               0 0 60px rgba(0, 212, 255, 0.3);
+}
+
+.glow-cyan {
+  text-shadow: 0 0 20px rgba(0, 255, 255, 0.8),
+               0 0 40px rgba(0, 255, 255, 0.5);
+}
+
+.box-glow-blue {
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.6),
+              0 0 60px rgba(0, 212, 255, 0.3),
+              inset 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(26, 41, 66, 0.3);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+/* Animation Utilities */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(0, 212, 255, 1));
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  html,
+  body {
+    cursor: auto;
+  }
+}
+
+/* Prevent text selection during interactions */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* GPU Acceleration */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
