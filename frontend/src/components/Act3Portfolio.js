@@ -162,7 +162,6 @@ const Act3Portfolio = ({ isMobile }) => {
           </ul>
         </div>
       </nav>
-      </div>
 
       {/* Hero Section */}
       <section 

@@ -20,6 +20,7 @@ const LiveTerminal = () => {
         setCurrentLine(index);
       }, line.delay);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
