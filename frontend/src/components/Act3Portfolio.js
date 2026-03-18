@@ -2,21 +2,25 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import axios from 'axios';
-import { Github, Linkedin, Instagram, Mail } from 'lucide-react';
-import LiveIntelligencePanel from './LiveIntelligencePanel';
-import CommandPalette from './CommandPalette';
-import ModeToggle from './ModeToggle';
+import { Github, Linkedin, Instagram, Mail, Download } from 'lucide-react';
+import LiveTerminal from './LiveTerminal';
+import PerformanceModeToggle from './PerformanceModeToggle';
+import EnhancedProjectCard from './EnhancedProjectCard';
+import SkillConstellation from './SkillConstellation';
+import LightningEffect from './LightningEffect';
 import ProjectStoryMode from './ProjectStoryMode';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Act3Portfolio = ({ isMobile }) => {
   const containerRef = useRef(null);
+  const videoRef = useRef(null);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [showCommandPalette, setShowCommandPalette] = useState(false);
   const [mode, setMode] = useState('cinematic');
+  const [lightningTrigger, setLightningTrigger] = useState(false);
+  const [navbarVisible, setNavbarVisible] = useState(true);
 
   useEffect(() => {
     gsap.fromTo(
@@ -27,17 +31,42 @@ const Act3Portfolio = ({ isMobile }) => {
 
     fetchGitHubProjects();
 
-    // Command palette shortcut
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        setShowCommandPalette(true);
-      }
-    };
+    // Cinematic video zoom
+    if (mode === 'cinematic' && videoRef.current) {
+      gsap.to(videoRef.current, {
+        scale: 1.1,
+        duration: 20,
+        ease: 'none',
+        repeat: -1,
+        yoyo: true,
+      });
+    }
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+    // Lightning scroll triggers
+    if (mode === 'cinematic') {
+      ScrollTrigger.create({
+        trigger: '#projects',
+        start: 'top center',
+        onEnter: () => setLightningTrigger(prev => !prev),
+      });
+
+      ScrollTrigger.create({
+        trigger: '#skills',
+        start: 'top center',
+        onEnter: () => setLightningTrigger(prev => !prev),
+      });
+
+      ScrollTrigger.create({
+        trigger: '#contact',
+        start: 'top center',
+        onEnter: () => setLightningTrigger(prev => !prev),
+      });
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, [mode]);
 
   const fetchGitHubProjects = async () => {
     try {
@@ -62,56 +91,92 @@ const Act3Portfolio = ({ isMobile }) => {
       className={`act-container relative w-full min-h-screen`}
       data-testid="act3-portfolio-container"
     >
+      {/* Lightning Effect */}
+      {mode === 'cinematic' && <LightningEffect trigger={lightningTrigger} />}
+
       {/* Storm Background Video - Continuous Loop */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="fixed inset-0 w-full h-full object-cover z-0"
-        style={{ opacity: 0.3 }}
-      >
-        <source src="/assets/storm.mp4" type="video/mp4" />
-      </video>
+      {mode === 'cinematic' ? (
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="fixed inset-0 w-full h-full object-cover z-0"
+          style={{ opacity: 0.3 }}
+        >
+          <source src="/assets/storm.mp4" type="video/mp4" />
+        </video>
+      ) : (
+        <div className="fixed inset-0 bg-gradient-to-b from-gray-900 via-gray-800 to-black z-0" />
+      )}
 
       {/* Dark overlay */}
       <div className="fixed inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/80 z-0" />
 
       {/* Content wrapper */}
       <div className="relative z-10">
-      {/* Mode Toggle */}
-      <ModeToggle mode={mode} onModeChange={setMode} />
+      
+      {/* Performance Mode Toggle */}
+      <PerformanceModeToggle onModeChange={setMode} />
 
-      {/* Command Palette */}
-      <CommandPalette 
-        isOpen={showCommandPalette} 
-        onClose={() => setShowCommandPalette(false)} 
-      />
+      {/* Glassmorphism Navbar */}
+      <nav 
+        className="fixed top-0 left-0 right-0 z-40 transition-all duration-300"
+        style={{
+          background: 'rgba(0, 10, 20, 0.7)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(0, 212, 255, 0.2)',
+          transform: navbarVisible ? 'translateY(0)' : 'translateY(-100%)',
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          {/* Logo */}
+          <img
+            src="/assets/logo.png"
+            alt="Logo"
+            className="w-10 h-10 md:w-12 md:h-12 object-contain cursor-pointer"
+            style={{
+              filter: 'drop-shadow(0 0 10px rgba(0, 212, 255, 0.6))',
+            }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          />
 
-      {/* Logo */}
-      <div className="fixed top-6 left-6 z-50">
-        <img
-          src="/assets/logo.png"
-          alt="Logo"
-          className="w-12 h-12 md:w-16 md:h-16 object-contain cursor-pointer"
-          style={{
-            filter: 'drop-shadow(0 0 10px rgba(0, 212, 255, 0.6))',
-            animation: mode === 'cinematic' ? 'shine 4s ease-in-out infinite' : 'none',
-          }}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        />
+          {/* Nav Links */}
+          <ul className="hidden md:flex items-center gap-8">
+            {['Home', 'About', 'Projects', 'Skills', 'Certificates', 'Contact'].map((item) => (
+              <li key={item}>
+                <a
+                  href={`#${item.toLowerCase()}`}
+                  className="relative text-sm text-gray-300 hover:text-cyan-400 transition-colors group"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  {item}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
       </div>
 
       {/* Hero Section */}
       <section 
-        id="hero" 
-        className="relative min-h-screen flex items-center justify-center px-4 md:px-12"
+        id="home" 
+        className="relative min-h-screen flex items-center justify-center px-4 md:px-12 pt-20"
         data-testid="hero-section"
       >
         <div className="max-w-7xl w-full grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black glow-blue leading-tight">
-              Artificial Intelligence &<br />Intelligent Systems
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black leading-tight">
+              <span className="block text-white">Artificial Intelligence &</span>
+              <span className="block bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                Intelligent Systems
+              </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 font-body">
               Engineering Intelligence. Creating Impact.
@@ -119,20 +184,23 @@ const Act3Portfolio = ({ isMobile }) => {
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-cyan-600 hover:bg-cyan-500 rounded-full font-semibold transition-all shadow-lg hover:shadow-cyan-500/50"
+                className="group relative px-8 py-4 bg-cyan-600 hover:bg-cyan-500 rounded-full font-semibold transition-all shadow-lg hover:shadow-cyan-500/50 overflow-hidden"
               >
-                View Projects
+                <span className="relative z-10">View Projects</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </button>
               <button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 glass hover:bg-cyan-900/30 rounded-full font-semibold transition-all"
+                className="group relative px-8 py-4 glass hover:bg-cyan-900/30 rounded-full font-semibold transition-all border border-cyan-500/30 flex items-center gap-2"
               >
-                Contact Me
+                <Download className="w-5 h-5" />
+                <span>Download Resume</span>
               </button>
             </div>
           </div>
+          
+          {/* Live Intelligence Terminal */}
           <div>
-            <LiveIntelligencePanel />
+            <LiveTerminal />
           </div>
         </div>
       </section>
@@ -176,7 +244,7 @@ const Act3Portfolio = ({ isMobile }) => {
         data-testid="projects-section"
       >
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center glow-blue">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             Projects
           </h2>
 
@@ -187,30 +255,11 @@ const Act3Portfolio = ({ isMobile }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {projects.map((project) => (
-                <div
+                <EnhancedProjectCard
                   key={project.id}
+                  project={project}
                   onClick={() => setSelectedProject(project)}
-                  className="glass rounded-2xl p-6 cursor-pointer transition-all hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/30"
-                  data-testid={`project-${project.name}`}
-                >
-                  <h3 className="text-xl font-heading font-bold text-cyan-400 mb-3">
-                    {project.name}
-                  </h3>
-                  <p className="text-sm text-gray-400 line-clamp-3 mb-4">
-                    {project.description || 'No description available'}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs">
-                    {project.language && (
-                      <span className="px-2 py-1 bg-cyan-900/30 rounded-full border border-cyan-500/30">
-                        {project.language}
-                      </span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <span className="w-2 h-2 bg-yellow-400 rounded-full" />
-                      {project.stargazers_count}
-                    </span>
-                  </div>
-                </div>
+                />
               ))}
             </div>
           )}
@@ -224,23 +273,16 @@ const Act3Portfolio = ({ isMobile }) => {
         data-testid="skills-section"
       >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center glow-blue">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             Skills Constellation
           </h2>
-          <div className="glass rounded-3xl p-12 min-h-[500px] flex items-center justify-center">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {['Python', 'Machine Learning', 'Deep Learning', 'Data Analysis', 'Web Dev', 'AI Systems', 'APIs', 'Databases'].map((skill) => (
-                <div
-                  key={skill}
-                  className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-2xl hover:scale-110 transition-transform cursor-pointer"
-                  style={{
-                    boxShadow: '0 0 30px rgba(0, 212, 255, 0.4)',
-                  }}
-                >
-                  <span className="text-sm md:text-base font-semibold text-center">{skill}</span>
-                </div>
-              ))}
-            </div>
+          <div className="glass rounded-3xl p-12 min-h-[500px] flex items-center justify-center"
+            style={{
+              background: 'rgba(0, 20, 40, 0.4)',
+              backdropFilter: 'blur(10px)',
+            }}
+          >
+            <SkillConstellation />
           </div>
         </div>
       </section>
