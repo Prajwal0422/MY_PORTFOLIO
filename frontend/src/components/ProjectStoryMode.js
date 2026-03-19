@@ -51,6 +51,7 @@ const ProjectStoryMode = ({ project, onClose }) => {
         document.removeEventListener('keydown', handleEsc);
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project]);
 
   const handleClose = () => {
