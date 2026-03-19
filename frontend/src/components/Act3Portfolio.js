@@ -9,6 +9,8 @@ import EnhancedProjectCard from './EnhancedProjectCard';
 import SkillConstellation from './SkillConstellation';
 import LightningEffect from './LightningEffect';
 import ProjectStoryMode from './ProjectStoryMode';
+import CinematicCursorComponent from './CinematicCursorComponent';
+import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,6 +23,7 @@ const Act3Portfolio = ({ isMobile }) => {
   const [mode, setMode] = useState('cinematic');
   const [lightningTrigger, setLightningTrigger] = useState(false);
   const [navbarVisible, setNavbarVisible] = useState(true);
+  const videoOptimizerRef = useRef(null);
 
   useEffect(() => {
     gsap.fromTo(
@@ -30,6 +33,11 @@ const Act3Portfolio = ({ isMobile }) => {
     );
 
     fetchGitHubProjects();
+
+    // Initialize video optimizer
+    if (videoRef.current) {
+      videoOptimizerRef.current = new VideoOptimizer(videoRef.current);
+    }
 
     // Cinematic video zoom
     if (mode === 'cinematic' && videoRef.current) {
@@ -63,8 +71,20 @@ const Act3Portfolio = ({ isMobile }) => {
       });
     }
 
+    // Debounced resize handler
+    const handleResize = debounce(() => {
+      ScrollTrigger.refresh();
+    }, 250);
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      window.removeEventListener('resize', handleResize);
+      
+      if (videoOptimizerRef.current) {
+        videoOptimizerRef.current.destroy();
+      }
     };
   }, [mode]);
 
@@ -91,6 +111,9 @@ const Act3Portfolio = ({ isMobile }) => {
       className={`act-container relative w-full min-h-screen`}
       data-testid="act3-portfolio-container"
     >
+      {/* Cinematic Cursor */}
+      {!isMobile && <CinematicCursorComponent />}
+      
       {/* Lightning Effect */}
       {mode === 'cinematic' && <LightningEffect trigger={lightningTrigger} />}
 
