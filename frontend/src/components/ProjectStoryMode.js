@@ -1,35 +1,110 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X, Github, ExternalLink } from 'lucide-react';
 import gsap from 'gsap';
 
 const ProjectStoryMode = ({ project, onClose }) => {
+  const modalRef = useRef(null);
+  const contentRef = useRef(null);
+
   useEffect(() => {
     if (project) {
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+
+      // Cinematic entrance animation
       const tl = gsap.timeline();
-      tl.fromTo('.story-bg', { opacity: 0 }, { opacity: 1, duration: 0.3 })
-        .fromTo('.story-title', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, '-=0.2')
-        .fromTo('.story-tech', { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, stagger: 0.1, duration: 0.3 })
-        .fromTo('.story-content', { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 });
+      tl.fromTo(modalRef.current, 
+        { opacity: 0 }, 
+        { opacity: 1, duration: 0.4, ease: 'power2.out' }
+      )
+      .fromTo(contentRef.current,
+        { scale: 0.9, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.5, ease: 'power2.out' },
+        '-=0.2'
+      )
+      .fromTo('.story-title', 
+        { y: 30, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }, 
+        '-=0.3'
+      )
+      .fromTo('.story-tech', 
+        { scale: 0, opacity: 0 }, 
+        { scale: 1, opacity: 1, stagger: 0.08, duration: 0.4, ease: 'back.out(1.7)' },
+        '-=0.2'
+      )
+      .fromTo('.story-content', 
+        { y: 20, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
+        '-=0.3'
+      );
+
+      // ESC key handler
+      const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+          handleClose();
+        }
+      };
+      document.addEventListener('keydown', handleEsc);
+
+      return () => {
+        document.body.style.overflow = 'auto';
+        document.removeEventListener('keydown', handleEsc);
+      };
     }
   }, [project]);
+
+  const handleClose = () => {
+    // Smooth exit animation
+    const tl = gsap.timeline({
+      onComplete: onClose
+    });
+    
+    tl.to(contentRef.current, {
+      scale: 0.9,
+      opacity: 0,
+      duration: 0.3,
+      ease: 'power2.in'
+    })
+    .to(modalRef.current, {
+      opacity: 0,
+      duration: 0.2,
+      ease: 'power2.in'
+    }, '-=0.1');
+  };
+
+  const handleBackdropClick = (e) => {
+    if (e.target === modalRef.current) {
+      handleClose();
+    }
+  };
 
   if (!project) return null;
 
   return (
     <div
-      className="story-bg fixed inset-0 z-[150] flex items-center justify-center bg-black/95 backdrop-blur-lg p-4"
-      onClick={onClose}
+      ref={modalRef}
+      className="fixed inset-0 z-[150] flex items-center justify-center bg-black/95 backdrop-blur-lg p-4"
+      onClick={handleBackdropClick}
       data-testid="project-story-mode"
+      style={{ cursor: 'default' }}
     >
       <div
-        className="relative max-w-4xl w-full max-h-[90vh] overflow-y-auto glass rounded-3xl p-8"
+        ref={contentRef}
+        className="modal-content relative max-w-4xl w-full max-h-[90vh] overflow-y-auto glass rounded-3xl p-8"
+        style={{
+          background: 'rgba(0, 20, 40, 0.8)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(0, 212, 255, 0.3)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Close Button */}
         <button
-          onClick={onClose}
-          className="absolute top-6 right-6 p-2 hover:bg-cyan-900/30 rounded-full transition-colors"
+          onClick={handleClose}
+          className="modal-close absolute top-6 right-6 p-2 hover:bg-cyan-900/50 rounded-full transition-all hover:rotate-90 group"
+          aria-label="Close modal"
         >
-          <X className="w-6 h-6 text-white" />
+          <X className="w-6 h-6 text-white group-hover:text-cyan-400 transition-colors" />
         </button>
 
         {/* Title */}
