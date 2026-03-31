@@ -4,11 +4,8 @@ import gsap from 'gsap';
 const Act1Storm = ({ onComplete, isMobile }) => {
   const containerRef = useRef(null);
   const shieldRef = useRef(null);
-  const hammerRef = useRef(null);
   const videoRef = useRef(null);
-  const [hammerVisible, setHammerVisible] = useState(false);
-  const [hammerAnimating, setHammerAnimating] = useState(false);
-  const [shieldImpacted, setShieldImpacted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     // Initial fade in animations
@@ -27,7 +24,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
       '-=1.5'
     );
 
-    // Glow pulse animation (no movement)
+    // Glow pulse animation
     gsap.to(shieldRef.current, {
       filter: 'drop-shadow(0 0 40px rgba(0, 212, 255, 1)) drop-shadow(0 0 80px rgba(0, 212, 255, 0.5))',
       duration: 2,
@@ -51,152 +48,46 @@ const Act1Storm = ({ onComplete, isMobile }) => {
       repeat: -1,
       yoyo: true,
     });
+
+    setIsReady(true);
   }, []);
 
-  const handleClick = (e) => {
-    if (hammerAnimating || shieldImpacted) return;
+  const handleClick = () => {
+    if (!isReady) return;
 
-    const clickX = e.clientX;
-    const clickY = e.clientY;
-
-    // Get shield bounds
-    const shieldRect = shieldRef.current.getBoundingClientRect();
-    const shieldCenterX = shieldRect.left + shieldRect.width / 2;
-    const shieldCenterY = shieldRect.top + shieldRect.height / 2;
-    const shieldRadius = shieldRect.width / 2;
-
-    // Check if click overlaps shield
-    const distance = Math.sqrt(
-      Math.pow(clickX - shieldCenterX, 2) + Math.pow(clickY - shieldCenterY, 2)
-    );
-    const hitsShield = distance < shieldRadius * 1.3;
-
-    setHammerVisible(true);
-    setHammerAnimating(true);
-
-    // Start hammer from top-right
-    gsap.set(hammerRef.current, {
-      x: window.innerWidth + 100,
-      y: -100,
-      rotation: 0,
-      opacity: 1,
-    });
-
-    // Target position
-    const targetX = hitsShield ? shieldCenterX : clickX;
-    const targetY = hitsShield ? shieldCenterY : clickY;
-    const duration = hitsShield ? 0.8 : 1.2;
-
-    gsap.to(hammerRef.current, {
-      x: targetX,
-      y: targetY,
-      rotation: 720,
-      duration: duration,
-      ease: hitsShield ? 'power3.in' : 'power2.out',
-      onComplete: () => {
-        if (hitsShield) {
-          handleShieldImpact();
-        } else {
-          setHammerAnimating(false);
-        }
-      },
-    });
-  };
-
-  const handleShieldImpact = () => {
-    setShieldImpacted(true);
-
-    // Thunder sound - use thunder.mp3
-    try {
-      const audio = new Audio('/assets/thunder.mp3');
-      audio.volume = 0.7;
-      audio.play().catch(console.log);
-    } catch (e) {
-      console.log('Audio error:', e);
-    }
-
-    // Lightning flash
+    // Lightning flash effect
     const flash = document.createElement('div');
-    flash.className = 'lightning-flash';
+    flash.style.cssText = `
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, rgba(200, 230, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 40%, transparent 80%);
+      z-index: 9999;
+      pointer-events: none;
+    `;
     document.body.appendChild(flash);
+
     gsap.to(flash, {
-      opacity: 0.8,
+      opacity: 0.9,
       duration: 0.1,
       yoyo: true,
-      repeat: 5,
+      repeat: 3,
       onComplete: () => flash.remove(),
     });
 
-    // Screen shake
+    // Fade out and transition
     gsap.to(containerRef.current, {
-      x: () => gsap.utils.random(-15, 15),
-      y: () => gsap.utils.random(-15, 15),
-      duration: 0.05,
-      repeat: 15,
-      yoyo: true,
-      onComplete: () => gsap.set(containerRef.current, { x: 0, y: 0 }),
+      opacity: 0,
+      duration: 1.5,
+      ease: 'power2.inOut',
+      delay: 0.5,
+      onComplete: onComplete,
     });
-
-    // Shield glow burst
-    gsap.to(shieldRef.current, {
-      filter: 'drop-shadow(0 0 100px rgba(0, 212, 255, 1)) drop-shadow(0 0 150px rgba(0, 255, 255, 1))',
-      duration: 0.3,
-      yoyo: true,
-      repeat: 3,
-    });
-
-    // Ripples
-    const rect = shieldRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    for (let i = 0; i < 4; i++) {
-      setTimeout(() => {
-        const ripple = document.createElement('div');
-        ripple.className = 'ripple';
-        ripple.style.left = centerX + 'px';
-        ripple.style.top = centerY + 'px';
-        ripple.style.width = '150px';
-        ripple.style.height = '150px';
-        containerRef.current.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 1000);
-      }, i * 200);
-    }
-
-    // Thunder sound
-    try {
-      const audio = new Audio('/assets/thunder.mp3');
-      audio.volume = 0.5;
-      audio.play().catch(console.log);
-    } catch (e) {}
-
-    // Transition after impact
-    setTimeout(() => {
-      gsap.to(shieldRef.current, {
-        scale: 2,
-        opacity: 0,
-        duration: 1,
-        ease: 'power2.in',
-      });
-
-      gsap.to(hammerRef.current, {
-        opacity: 0,
-        duration: 0.5,
-      });
-
-      gsap.to(containerRef.current, {
-        opacity: 0,
-        duration: 1.5,
-        delay: 0.5,
-        onComplete: onComplete,
-      });
-    }, 1500);
   };
 
   return (
     <div
       ref={containerRef}
-      className="act-container relative w-full h-screen overflow-hidden cursor-none"
+      className="act-container relative w-full h-screen overflow-hidden cursor-pointer"
       onClick={handleClick}
       data-testid="act1-storm-container"
     >
@@ -225,6 +116,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           style={{
             filter: 'drop-shadow(0 0 30px rgba(0, 212, 255, 0.8))',
             transform: 'translate(-50%, -50%)',
+            animation: 'shieldFloat 5s ease-in-out infinite',
           }}
           data-testid="shield-element"
         >
@@ -238,36 +130,24 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         {/* Typography - Below shield */}
         <div className="intro-text absolute bottom-32 left-1/2 transform -translate-x-1/2 text-center space-y-6 max-w-4xl w-full px-4">
           <h1
-            className="text-3xl md:text-4xl lg:text-5xl font-heading glow-blue tracking-widest"
+            className="text-3xl md:text-4xl lg:text-5xl font-heading tracking-widest"
             data-testid="intro-quote"
-            style={{ letterSpacing: '0.15em' }}
+            style={{ 
+              letterSpacing: '0.15em',
+              color: '#fff',
+              textShadow: '0 0 20px rgba(0, 212, 255, 0.6)',
+            }}
           >
             Before the storm... there is silence
           </h1>
           <p
-            className="text-sm md:text-base text-gray-400 font-body tracking-wide"
+            className="text-sm md:text-base text-gray-400 font-body tracking-wide animate-pulse"
             data-testid="intro-hint"
           >
-            Click anywhere to move the hammer. Click the shield to awaken the storm.
+            Click to continue
           </p>
         </div>
       </div>
-
-      {/* Hammer - 50% scale */}
-      {hammerVisible && (
-        <div
-          ref={hammerRef}
-          className="fixed pointer-events-none z-50"
-          style={{ transform: 'translate(-50%, -50%) scale(0.5)' }}
-          data-testid="hammer-element"
-        >
-          <img
-            src="/assets/hammer.png"
-            alt="Hammer"
-            className="w-32 h-32 md:w-40 md:h-40 object-contain"
-          />
-        </div>
-      )}
 
       {/* Logo */}
       <div className="absolute top-6 left-6 z-20" data-testid="logo-act1">
@@ -282,8 +162,13 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         />
       </div>
 
-      {/* Custom cursor dot */}
+      {/* Animations */}
       <style>{`
+        @keyframes shieldFloat {
+          0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(0deg); }
+          50% { transform: translate(-50%, -50%) translateY(-20px) rotate(2deg); }
+        }
+        
         @keyframes shine {
           0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6)); }
           50% { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1)); }
