@@ -19,6 +19,8 @@ import PublicationSection from './PublicationSection';
 import ResumeDownload from './ResumeDownload';
 import AnimatedGridBackground from './AnimatedGridBackground';
 import ParticleField from './ParticleField';
+import ScrollProgressBar from './ScrollProgressBar';
+import FloatingActionMenu from './FloatingActionMenu';
 import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -134,6 +136,9 @@ const Act3Portfolio = ({ isMobile }) => {
     >
       {/* Cinematic Cursor */}
       {!isMobile && <CinematicCursorComponent />}
+      
+      {/* Scroll Progress Bar */}
+      <ScrollProgressBar />
       
       {/* Lightning Effect */}
       {mode === 'cinematic' && <LightningEffect trigger={lightningTrigger} />}
@@ -408,6 +413,9 @@ const Act3Portfolio = ({ isMobile }) => {
 
       {/* Floating Resume Download Button */}
       <ResumeDownload />
+
+      {/* Floating Action Menu */}
+      <FloatingActionMenu />
 
       <style>{`
         @keyframes shine {
