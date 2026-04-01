@@ -26,6 +26,7 @@ import TestimonialsSection from './TestimonialsSection';
 import SectionDivider from './SectionDivider';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import ContactForm from './ContactForm';
+import MobileMenu from './MobileMenu';
 import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -468,6 +469,9 @@ const Act3Portfolio = ({ isMobile }) => {
 
       {/* Keyboard Shortcuts */}
       <KeyboardShortcuts />
+
+      {/* Mobile Menu */}
+      {isMobile && <MobileMenu />}
 
       <style>{`
         @keyframes shine {
