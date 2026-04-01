@@ -17,6 +17,8 @@ import InternshipSection from './InternshipSection';
 import CertificationsSection from './CertificationsSection';
 import PublicationSection from './PublicationSection';
 import ResumeDownload from './ResumeDownload';
+import AnimatedGridBackground from './AnimatedGridBackground';
+import ParticleField from './ParticleField';
 import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -136,6 +138,9 @@ const Act3Portfolio = ({ isMobile }) => {
       {/* Lightning Effect */}
       {mode === 'cinematic' && <LightningEffect trigger={lightningTrigger} />}
 
+      {/* Animated Grid Background */}
+      {mode === 'cinematic' && <AnimatedGridBackground />}
+
       {/* Storm Background Video - Continuous Loop */}
       {mode === 'cinematic' ? (
         <video
@@ -211,7 +216,10 @@ const Act3Portfolio = ({ isMobile }) => {
         className="relative min-h-screen flex items-center justify-center px-4 md:px-12 pt-20"
         data-testid="hero-section"
       >
-        <div className="max-w-7xl w-full grid md:grid-cols-2 gap-12 items-center">
+        {/* Particle Field */}
+        {mode === 'cinematic' && <ParticleField />}
+        
+        <div className="max-w-7xl w-full grid md:grid-cols-2 gap-12 items-center relative z-10">
           <div className="space-y-8">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black leading-tight">
               <span className="block text-white">Artificial Intelligence &</span>
