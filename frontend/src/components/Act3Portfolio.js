@@ -10,6 +10,13 @@ import SkillConstellation from './SkillConstellation';
 import LightningEffect from './LightningEffect';
 import ProjectStoryMode from './ProjectStoryMode';
 import CinematicCursorComponent from './CinematicCursorComponent';
+import AboutSection from './AboutSection';
+import EducationSection from './EducationSection';
+import SkillsVisualization from './SkillsVisualization';
+import InternshipSection from './InternshipSection';
+import CertificationsSection from './CertificationsSection';
+import PublicationSection from './PublicationSection';
+import ResumeDownload from './ResumeDownload';
 import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -53,6 +60,12 @@ const Act3Portfolio = ({ isMobile }) => {
     // Lightning scroll triggers
     if (mode === 'cinematic') {
       ScrollTrigger.create({
+        trigger: '#about',
+        start: 'top center',
+        onEnter: () => setLightningTrigger(prev => !prev),
+      });
+
+      ScrollTrigger.create({
         trigger: '#projects',
         start: 'top center',
         onEnter: () => setLightningTrigger(prev => !prev),
@@ -60,6 +73,12 @@ const Act3Portfolio = ({ isMobile }) => {
 
       ScrollTrigger.create({
         trigger: '#skills',
+        start: 'top center',
+        onEnter: () => setLightningTrigger(prev => !prev),
+      });
+
+      ScrollTrigger.create({
+        trigger: '#experience',
         start: 'top center',
         onEnter: () => setLightningTrigger(prev => !prev),
       });
@@ -167,7 +186,7 @@ const Act3Portfolio = ({ isMobile }) => {
 
           {/* Nav Links */}
           <ul className="hidden md:flex items-center gap-8">
-            {['Home', 'About', 'Projects', 'Skills', 'Certificates', 'Contact'].map((item) => (
+            {['Home', 'About', 'Education', 'Projects', 'Skills', 'Experience', 'Certificates', 'Contact'].map((item) => (
               <li key={item}>
                 <a
                   href={`#${item.toLowerCase()}`}
@@ -228,36 +247,10 @@ const Act3Portfolio = ({ isMobile }) => {
       </section>
 
       {/* About Section */}
-      <section 
-        id="about" 
-        className="relative min-h-screen flex items-center justify-center px-4 md:px-12 py-24"
-        data-testid="about-section"
-      >
-        <div className="max-w-4xl glass rounded-3xl p-8 md:p-12">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-8 glow-blue">
-            About Me
-          </h2>
-          <div className="space-y-6 text-lg md:text-xl text-gray-300 leading-relaxed">
-            <p>
-              Passionate AI student exploring the frontiers of Artificial Intelligence and Intelligent Systems.
-            </p>
-            <p>
-              Focused on building real-world solutions that leverage cutting-edge machine learning,
-              neural networks, and data-driven technologies.
-            </p>
-            <p>
-              Vision: To become a tech leader driving innovation at the intersection of AI and practical impact.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            {['Python', 'Machine Learning', 'Data Science', 'AI Systems'].map((skill) => (
-              <div key={skill} className="p-4 bg-cyan-900/20 rounded-xl text-center border border-cyan-500/30">
-                <p className="font-semibold text-cyan-400">{skill}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <AboutSection />
+
+      {/* Education Section */}
+      <EducationSection />
 
       {/* Projects Section */}
       <section 
@@ -288,11 +281,20 @@ const Act3Portfolio = ({ isMobile }) => {
         </div>
       </section>
 
+      {/* Skills Visualization */}
+      <SkillsVisualization />
+
+      {/* Internship Section */}
+      <InternshipSection />
+
+      {/* Publication Section */}
+      <PublicationSection />
+
       {/* Skills Constellation */}
       <section 
-        id="skills" 
+        id="skillsconstellation" 
         className="relative min-h-screen px-4 md:px-12 py-24"
-        data-testid="skills-section"
+        data-testid="skills-constellation-section"
       >
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
@@ -348,22 +350,8 @@ const Act3Portfolio = ({ isMobile }) => {
         </div>
       </section>
 
-      {/* Certificates */}
-      <section 
-        id="certificates" 
-        className="relative min-h-screen px-4 md:px-12 py-24"
-        data-testid="certificates-section"
-      >
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center glow-blue">
-            Certificates
-          </h2>
-          <div className="glass rounded-3xl p-12 text-center">
-            <p className="text-xl text-gray-400 mb-4">Certificate gallery - Ready for upload</p>
-            <p className="text-sm text-gray-500">Masonry layout prepared for your certificates</p>
-          </div>
-        </div>
-      </section>
+      {/* Certifications Section */}
+      <CertificationsSection />
 
       {/* Contact */}
       <section 
@@ -409,6 +397,9 @@ const Act3Portfolio = ({ isMobile }) => {
         project={selectedProject} 
         onClose={() => setSelectedProject(null)} 
       />
+
+      {/* Floating Resume Download Button */}
+      <ResumeDownload />
 
       <style>{`
         @keyframes shine {
