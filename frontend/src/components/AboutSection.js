@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import StatsCounter from './StatsCounter';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,39 +72,15 @@ const AboutSection = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            <div 
-              className="p-6 rounded-xl text-center"
-              style={{
-                background: 'rgba(0, 212, 255, 0.1)',
-                border: '1px solid rgba(0, 212, 255, 0.3)',
-              }}
-            >
-              <div className="text-3xl font-bold text-cyan-400 mb-2">5+</div>
-              <div className="text-sm text-gray-400">Projects Completed</div>
-            </div>
-            
-            <div 
-              className="p-6 rounded-xl text-center"
-              style={{
-                background: 'rgba(0, 212, 255, 0.1)',
-                border: '1px solid rgba(0, 212, 255, 0.3)',
-              }}
-            >
-              <div className="text-3xl font-bold text-cyan-400 mb-2">AI/ML</div>
-              <div className="text-sm text-gray-400">Specialization</div>
-            </div>
-            
-            <div 
-              className="p-6 rounded-xl text-center"
-              style={{
-                background: 'rgba(0, 212, 255, 0.1)',
-                border: '1px solid rgba(0, 212, 255, 0.3)',
-              }}
-            >
-              <div className="text-3xl font-bold text-cyan-400 mb-2">NLP</div>
-              <div className="text-sm text-gray-400">Core Expertise</div>
-            </div>
+          <div className="mt-8">
+            <StatsCounter
+              stats={[
+                { value: 15, suffix: '+', label: 'Projects Completed' },
+                { value: 8, suffix: '.5', label: 'CGPA' },
+                { value: 5, suffix: '+', label: 'Certifications' },
+                { value: 100, suffix: '%', label: 'Dedication' },
+              ]}
+            />
           </div>
         </div>
       </div>
