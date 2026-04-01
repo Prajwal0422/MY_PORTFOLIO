@@ -27,6 +27,7 @@ import SectionDivider from './SectionDivider';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import ContactForm from './ContactForm';
 import MobileMenu from './MobileMenu';
+import Footer from './Footer';
 import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -453,6 +454,9 @@ const Act3Portfolio = ({ isMobile }) => {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
       </div>
 
       {/* Project Story Mode Modal */}
