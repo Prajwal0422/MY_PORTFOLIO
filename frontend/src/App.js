@@ -4,9 +4,10 @@ import Act1Storm from '@/components/Act1Storm';
 import Act2NameReveal from '@/components/Act2NameReveal';
 import Act3Portfolio from '@/components/Act3Portfolio';
 import CustomCursor from '@/components/CustomCursor';
+import Preloader from '@/components/Preloader';
 
 function App() {
-  const [currentAct, setCurrentAct] = useState(1);
+  const [currentAct, setCurrentAct] = useState(0); // Start with 0 for preloader
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -21,6 +22,10 @@ function App() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const handlePreloaderComplete = () => {
+    setCurrentAct(1);
+  };
+
   const handleAct1Complete = () => {
     setCurrentAct(2);
   };
@@ -33,6 +38,11 @@ function App() {
     <div className="App">
       {/* Custom cursor - only on desktop */}
       {!isMobile && <CustomCursor />}
+      
+      {/* Preloader */}
+      {currentAct === 0 && (
+        <Preloader onComplete={handlePreloaderComplete} />
+      )}
       
       {/* ACT 1: Storm Intro */}
       {currentAct === 1 && (
