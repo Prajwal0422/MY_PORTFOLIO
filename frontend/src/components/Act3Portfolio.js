@@ -21,6 +21,9 @@ import AnimatedGridBackground from './AnimatedGridBackground';
 import ParticleField from './ParticleField';
 import ScrollProgressBar from './ScrollProgressBar';
 import FloatingActionMenu from './FloatingActionMenu';
+import GitHubHeatmap from './GitHubHeatmap';
+import TestimonialsSection from './TestimonialsSection';
+import SectionDivider from './SectionDivider';
 import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -365,6 +368,23 @@ const Act3Portfolio = ({ isMobile }) => {
 
       {/* Certifications Section */}
       <CertificationsSection />
+
+      <SectionDivider variant="line" />
+
+      {/* GitHub Activity Heatmap */}
+      <section className="relative px-4 md:px-12 py-24">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-12 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            Coding Consistency
+          </h2>
+          <GitHubHeatmap username="Prajwal0422" />
+        </div>
+      </section>
+
+      <SectionDivider variant="dots" />
+
+      {/* Testimonials */}
+      <TestimonialsSection />
 
       {/* Contact */}
       <section 
