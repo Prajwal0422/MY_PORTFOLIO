@@ -24,6 +24,8 @@ import FloatingActionMenu from './FloatingActionMenu';
 import GitHubHeatmap from './GitHubHeatmap';
 import TestimonialsSection from './TestimonialsSection';
 import SectionDivider from './SectionDivider';
+import KeyboardShortcuts from './KeyboardShortcuts';
+import ContactForm from './ContactForm';
 import { VideoOptimizer, debounce } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -392,33 +394,60 @@ const Act3Portfolio = ({ isMobile }) => {
         className="relative min-h-screen px-4 md:px-12 py-24 flex items-center justify-center"
         data-testid="contact-section"
       >
-        <div className="max-w-4xl w-full">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center glow-blue">
+        <div className="max-w-6xl w-full">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
             Let's Connect
           </h2>
-          <div className="glass rounded-3xl p-12">
-            <div className="flex flex-wrap justify-center gap-8">
-              {[
-                { icon: Github, name: 'GitHub', url: 'https://github.com/Prajwal0422' },
-                { icon: Linkedin, name: 'LinkedIn', url: '#' },
-                { icon: Instagram, name: 'Instagram', url: '#' },
-                { icon: Mail, name: 'Email', url: 'mailto:your-email@example.com' },
-              ].map((link) => (
-                <a
-                  key={link.name}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex flex-col items-center gap-3 p-6 rounded-2xl bg-gray-900/50 hover:bg-gray-900 transition-all hover:scale-110"
-                >
-                  <link.icon className="w-12 h-12 group-hover:text-cyan-400 transition-colors" />
-                  <span className="text-sm font-semibold">{link.name}</span>
-                </a>
-              ))}
-            </div>
-            <div className="mt-12 text-center">
-              <p className="text-gray-400">Open to opportunities and collaborations</p>
-              <p className="text-sm text-gray-600 mt-4">Press <kbd className="px-2 py-1 bg-gray-800 rounded">Ctrl+K</kbd> for quick navigation</p>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Contact Form */}
+            <ContactForm />
+
+            {/* Social Links */}
+            <div className="space-y-6">
+              <div className="glass rounded-3xl p-8"
+                style={{
+                  background: 'rgba(0, 20, 40, 0.6)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(0, 212, 255, 0.3)',
+                }}
+              >
+                <h3 className="text-2xl font-heading font-bold mb-6 text-cyan-400">
+                  Connect With Me
+                </h3>
+                <div className="flex flex-wrap gap-4">
+                  {[
+                    { icon: Github, name: 'GitHub', url: 'https://github.com/Prajwal0422' },
+                    { icon: Linkedin, name: 'LinkedIn', url: '#' },
+                    { icon: Instagram, name: 'Instagram', url: '#' },
+                    { icon: Mail, name: 'Email', url: 'mailto:your-email@example.com' },
+                  ].map((link) => (
+                    <a
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex flex-col items-center gap-3 p-6 rounded-2xl bg-gray-900/50 hover:bg-gray-900 transition-all hover:scale-110 flex-1 min-w-[120px]"
+                    >
+                      <link.icon className="w-12 h-12 group-hover:text-cyan-400 transition-colors" />
+                      <span className="text-sm font-semibold">{link.name}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <div className="glass rounded-3xl p-8 text-center"
+                style={{
+                  background: 'rgba(0, 20, 40, 0.6)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(0, 212, 255, 0.3)',
+                }}
+              >
+                <p className="text-gray-400 mb-4">Open to opportunities and collaborations</p>
+                <p className="text-sm text-gray-600">
+                  Press <kbd className="px-2 py-1 bg-gray-800 rounded">Ctrl+K</kbd> for quick navigation
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -436,6 +465,9 @@ const Act3Portfolio = ({ isMobile }) => {
 
       {/* Floating Action Menu */}
       <FloatingActionMenu />
+
+      {/* Keyboard Shortcuts */}
+      <KeyboardShortcuts />
 
       <style>{`
         @keyframes shine {
