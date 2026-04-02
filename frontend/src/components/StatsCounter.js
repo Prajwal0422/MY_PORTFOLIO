@@ -10,9 +10,10 @@ const StatsCounter = ({ stats }) => {
 
   useEffect(() => {
     const counters = stats.map((stat, index) => ({ value: 0 }));
+    const container = containerRef.current;
 
     ScrollTrigger.create({
-      trigger: containerRef.current,
+      trigger: container,
       start: 'top 70%',
       onEnter: () => {
         stats.forEach((stat, index) => {
@@ -34,7 +35,7 @@ const StatsCounter = ({ stats }) => {
 
     return () => {
       ScrollTrigger.getAll().forEach(trigger => {
-        if (trigger.trigger === containerRef.current) {
+        if (trigger.trigger === container) {
           trigger.kill();
         }
       });

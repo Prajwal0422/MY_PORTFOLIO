@@ -27,6 +27,7 @@ const AboutSection = () => {
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const startTyping = () => {
