@@ -41,25 +41,28 @@ const SkillsVisualization = () => {
   };
 
   useEffect(() => {
-    const progressBars = sectionRef.current.querySelectorAll('.progress-bar');
-    
-    progressBars.forEach((bar) => {
-      const targetWidth = bar.getAttribute('data-width');
+    const section = sectionRef.current;
+    if (section) {
+      const progressBars = section.querySelectorAll('.progress-bar');
       
-      gsap.fromTo(
-        bar,
-        { width: '0%' },
-        {
-          width: targetWidth + '%',
-          duration: 1.5,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: bar,
-            start: 'top 80%',
-          },
-        }
-      );
-    });
+      progressBars.forEach((bar) => {
+        const targetWidth = bar.getAttribute('data-width');
+        
+        gsap.fromTo(
+          bar,
+          { width: '0%' },
+          {
+            width: targetWidth + '%',
+            duration: 1.5,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: bar,
+              start: 'top 80%',
+            },
+          }
+        );
+      });
+    }
   }, []);
 
   return (

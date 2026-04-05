@@ -32,27 +32,32 @@ const GitHubHeatmap = ({ username = 'Prajwal0422' }) => {
     setLoading(false);
 
     // Animate cells on scroll
-    ScrollTrigger.create({
-      trigger: containerRef.current,
-      start: 'top 70%',
-      onEnter: () => {
-        const cells = containerRef.current.querySelectorAll('.heatmap-cell');
-        gsap.fromTo(
-          cells,
-          { scale: 0, opacity: 0 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 0.5,
-            stagger: {
-              amount: 1,
-              from: 'start',
-            },
-            ease: 'back.out(1.7)',
+    const container = containerRef.current;
+    if (container) {
+      ScrollTrigger.create({
+        trigger: container,
+        start: 'top 70%',
+        onEnter: () => {
+          const cells = container.querySelectorAll('.heatmap-cell');
+          if (cells.length > 0) {
+            gsap.fromTo(
+              cells,
+              { scale: 0, opacity: 0 },
+              {
+                scale: 1,
+                opacity: 1,
+                duration: 0.5,
+                stagger: {
+                  amount: 1,
+                  from: 'start',
+                },
+                ease: 'back.out(1.7)',
+              }
+            );
           }
-        );
-      },
-    });
+        },
+      });
+    }
   }, [username]);
 
   const getColor = (count) => {

@@ -33,24 +33,29 @@ const TestimonialsSection = () => {
   ];
 
   useEffect(() => {
-    const cards = sectionRef.current.querySelectorAll('.testimonial-card');
-    
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 50, rotateX: -20 },
-      {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top center',
-        },
+    const section = sectionRef.current;
+    if (section) {
+      const cards = section.querySelectorAll('.testimonial-card');
+      
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 50, rotateX: -20 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top center',
+            },
+          }
+        );
       }
-    );
+    }
   }, []);
 
   return (

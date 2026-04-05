@@ -37,24 +37,29 @@ const CertificationsSection = () => {
   ];
 
   useEffect(() => {
-    const cards = sectionRef.current.querySelectorAll('.cert-card');
-    
-    gsap.fromTo(
-      cards,
-      { opacity: 0, scale: 0.8, rotateY: 90 },
-      {
-        opacity: 1,
-        scale: 1,
-        rotateY: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top center',
-        },
+    const section = sectionRef.current;
+    if (section) {
+      const cards = section.querySelectorAll('.cert-card');
+      
+      if (cards.length > 0) {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, scale: 0.8, rotateY: 90 },
+          {
+            opacity: 1,
+            scale: 1,
+            rotateY: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top center',
+            },
+          }
+        );
       }
-    );
+    }
   }, []);
 
   return (
