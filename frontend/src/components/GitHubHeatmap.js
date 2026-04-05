@@ -13,6 +13,7 @@ const GitHubHeatmap = ({ username = 'Prajwal0422' }) => {
 
   useEffect(() => {
     fetchGitHubData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [username]);
 
   const fetchGitHubData = async () => {
