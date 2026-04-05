@@ -91,18 +91,24 @@ const ProjectStoryMode = ({ project, onClose }) => {
     >
       <div
         ref={contentRef}
-        className="modal-content relative max-w-4xl w-full max-h-[90vh] overflow-y-auto glass rounded-3xl p-8"
+        className="modal-content relative max-w-4xl w-full max-h-[90vh] overflow-y-auto glass rounded-3xl p-8 md:p-12"
         style={{
           background: 'rgba(0, 20, 40, 0.8)',
           backdropFilter: 'blur(20px)',
           border: '1px solid rgba(0, 212, 255, 0.3)',
+          paddingTop: '4rem',
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="modal-close absolute top-6 right-6 p-2 hover:bg-cyan-900/50 rounded-full transition-all hover:rotate-90 group"
+          className="modal-close absolute top-6 right-6 z-50 p-3 hover:bg-cyan-900/50 rounded-full transition-all hover:rotate-90 group"
+          style={{
+            background: 'rgba(0, 20, 40, 0.9)',
+            border: '1px solid rgba(0, 212, 255, 0.3)',
+            cursor: 'pointer',
+          }}
           aria-label="Close modal"
         >
           <X className="w-6 h-6 text-white group-hover:text-cyan-400 transition-colors" />
