@@ -1,70 +1,105 @@
-# Getting Started with Create React App
+# Cinematic Portfolio - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A premium, cinematic portfolio website built with React, featuring stunning animations and interactive elements.
 
-## Available Scripts
+## 🎬 Features
 
-In the project directory, you can run:
+### Three-Act Structure
+- **Act 1**: Storm intro with glowing shield and lightning effects
+- **Act 2**: Cinematic video reveal with name animation
+- **Act 3**: Full portfolio with 50+ premium components
 
-### `npm start`
+### Premium Components
+- Animated preloader with progress bar
+- Particle field with connection lines
+- Animated grid background
+- Live intelligence terminal
+- GitHub activity heatmap with real-time data
+- 3D hover cards with depth effects
+- Skill constellation visualization
+- Project story mode modals
+- Testimonials with 3D effects
+- Certifications grid with zoom effects
+- Timeline components
+- Floating action menu
+- Keyboard shortcuts (Ctrl+K)
+- Mobile responsive menu
+- Contact form with validation
+- And 30+ more components!
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Animations & Effects
+- GSAP-powered smooth animations
+- Scroll-triggered reveals
+- Magnetic button interactions
+- Text reveal character-by-character
+- Glitch text effects
+- Lightning flashes on scroll
+- Particle systems
+- 3D card rotations
+- Hover depth physics
+- Progress bar animations
+- Parallax scrolling
+- Wave animations
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🚀 Tech Stack
 
-### `npm test`
+- **React** - UI library
+- **GSAP** - Animation library
+- **Tailwind CSS** - Styling
+- **Axios** - HTTP client
+- **Lucide React** - Icons
+- **CRACO** - Create React App Configuration Override
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📦 Installation
 
-### `npm run build`
+```bash
+# Install dependencies
+npm install
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Start development server
+npm start
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Build for production
+npm run build
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🎨 Customization
 
-### `npm run eject`
+### Update Personal Information
+- Edit `frontend/src/components/AboutSection.js` for bio
+- Edit `frontend/src/components/EducationSection.js` for education
+- Edit `frontend/src/components/InternshipSection.js` for experience
+- Edit `frontend/src/components/CertificationsSection.js` for certifications
+- Edit `frontend/src/components/PublicationSection.js` for publications
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Update GitHub Username
+Change the username in:
+- `frontend/src/components/Act3Portfolio.js` (line with GitHub API call)
+- `frontend/src/components/GitHubHeatmap.js` (username prop)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Update Social Links
+Edit `frontend/src/components/Footer.js` and `frontend/src/components/FloatingActionMenu.js`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🎯 Performance
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Lazy loading for images
+- Code splitting
+- Optimized animations (60fps)
+- Debounced scroll handlers
+- Video optimization
+- Mobile responsive
 
-## Learn More
+## 📱 Browser Support
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📄 License
 
-### Code Splitting
+MIT License - feel free to use for your own portfolio!
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🙏 Credits
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Built with ❤️ using modern web technologies
