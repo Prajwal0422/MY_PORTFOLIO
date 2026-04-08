@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 /**
- * Custom hook to track window size
+ * Custom hook to track window dimensions
  * @returns {Object} { width, height, isMobile, isTablet, isDesktop }
  */
 const useWindowSize = () => {
@@ -17,7 +17,7 @@ const useWindowSize = () => {
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-
+      
       setWindowSize({
         width,
         height,
@@ -27,7 +27,7 @@ const useWindowSize = () => {
       });
     };
 
-    // Debounce resize handler
+    // Debounce resize events
     let timeoutId;
     const debouncedResize = () => {
       clearTimeout(timeoutId);
