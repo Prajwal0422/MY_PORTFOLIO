@@ -41,7 +41,7 @@ const SkillConstellation = () => {
         const endSkill = skills[end];
 
         ctx.beginPath();
-        ctx.moveTo(startSkill.x, startSkill.y);
+        ctx.moveTo(startSkill.x, startSkill.y);....................
         ctx.lineTo(endSkill.x, endSkill.y);
         ctx.strokeStyle = `rgba(0, 212, 255, ${0.3 * Math.min(animationProgress, 1)})`;
         ctx.lineWidth = 1;
