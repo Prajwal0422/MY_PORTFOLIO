@@ -179,42 +179,49 @@ const Act3Portfolio = ({ isMobile }) => {
       {/* Performance Mode Toggle */}
       <PerformanceModeToggle onModeChange={setMode} />
 
-      {/* Glassmorphism Navbar */}
+      {/* Professional Glassmorphism Navbar */}
       <nav 
-        className="fixed top-0 left-0 right-0 z-40 transition-all duration-300"
+        className="fixed top-0 left-0 right-0 z-40 transition-all duration-500"
         style={{
-          background: 'rgba(0, 10, 20, 0.7)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(0, 212, 255, 0.2)',
+          background: 'linear-gradient(135deg, rgba(0, 10, 30, 0.85) 0%, rgba(0, 20, 40, 0.75) 100%)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(0, 212, 255, 0.3)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
           transform: navbarVisible ? 'translateY(0)' : 'translateY(-100%)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <img
-            src="/assets/logo.png"
-            alt="Logo"
-            className="w-10 h-10 md:w-12 md:h-12 object-contain cursor-pointer"
-            style={{
-              filter: 'drop-shadow(0 0 10px rgba(0, 212, 255, 0.6))',
-            }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          />
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+          {/* Logo with Professional Glow */}
+          <div className="flex items-center gap-3">
+            <img
+              src="/assets/logo.png"
+              alt="Logo"
+              className="w-12 h-12 md:w-14 md:h-14 object-contain cursor-pointer transition-transform hover:scale-110"
+              style={{
+                filter: 'drop-shadow(0 0 15px rgba(0, 212, 255, 0.8))',
+              }}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            />
+            <div className="hidden md:block">
+              <div className="text-lg font-bold text-white tracking-wide">Prajwal Jain</div>
+              <div className="text-xs text-cyan-400">AI Engineer</div>
+            </div>
+          </div>
 
-          {/* Nav Links */}
-          <ul className="hidden md:flex items-center gap-8">
+          {/* Professional Nav Links */}
+          <ul className="hidden md:flex items-center gap-1">
             {['Home', 'About', 'Education', 'Projects', 'Skills', 'Experience', 'Certificates', 'Contact'].map((item) => (
               <li key={item}>
                 <a
                   href={`#${item.toLowerCase()}`}
-                  className="relative text-sm text-gray-300 hover:text-cyan-400 transition-colors group"
+                  className="relative px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all group rounded-lg hover:bg-cyan-500/10"
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
                   {item}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300"></span>
+                  <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </a>
               </li>
             ))}
@@ -222,36 +229,64 @@ const Act3Portfolio = ({ isMobile }) => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Professional Hero Section */}
       <section 
         id="home" 
-        className="relative min-h-screen flex items-center justify-center px-4 md:px-12 pt-20"
+        className="relative min-h-screen flex items-center justify-center px-4 md:px-12 pt-24"
         data-testid="hero-section"
       >
         {/* Particle Field */}
         {mode === 'cinematic' && <ParticleField />}
         
-        <div className="max-w-7xl w-full grid md:grid-cols-2 gap-12 items-center relative z-10">
-          <div className="space-y-8">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black leading-tight">
-              <span className="block text-white">Artificial Intelligence &</span>
-              <span className="block bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+        <div className="max-w-7xl w-full grid md:grid-cols-2 gap-16 items-center relative z-10">
+          <div className="space-y-10">
+            {/* Professional Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 backdrop-blur-sm">
+              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-cyan-300">Available for Opportunities</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl lg:text-8xl font-heading font-black leading-tight">
+              <span className="block text-white mb-2">Artificial Intelligence &</span>
+              <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent animate-gradient">
                 Intelligent Systems
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 font-body">
-              Engineering Intelligence. Creating Impact.
+            
+            <p className="text-xl md:text-2xl text-gray-300 font-body leading-relaxed max-w-xl">
+              Engineering Intelligence. Creating Impact. Building the future with AI-driven solutions.
             </p>
+            
+            {/* Professional Stats */}
+            <div className="flex flex-wrap gap-8 py-4">
+              <div>
+                <div className="text-3xl font-bold text-cyan-400">50+</div>
+                <div className="text-sm text-gray-400">Projects</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-cyan-400">5+</div>
+                <div className="text-sm text-gray-400">Years Experience</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-cyan-400">10+</div>
+                <div className="text-sm text-gray-400">Certifications</div>
+              </div>
+            </div>
+            
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                className="group relative px-8 py-4 bg-cyan-600 hover:bg-cyan-500 rounded-full font-semibold transition-all shadow-lg hover:shadow-cyan-500/50 overflow-hidden"
+                className="group relative px-10 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 rounded-xl font-semibold transition-all shadow-2xl hover:shadow-cyan-500/50 overflow-hidden transform hover:scale-105"
               >
-                <span className="relative z-10">View Projects</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <span className="relative z-10 flex items-center gap-2">
+                  View Projects
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
               </button>
               <button
-                className="group relative px-8 py-4 glass hover:bg-cyan-900/30 rounded-full font-semibold transition-all border border-cyan-500/30 flex items-center gap-2"
+                className="group relative px-10 py-4 bg-white/5 hover:bg-white/10 rounded-xl font-semibold transition-all border-2 border-cyan-500/50 hover:border-cyan-400 flex items-center gap-2 backdrop-blur-sm transform hover:scale-105"
               >
                 <Download className="w-5 h-5" />
                 <span>Download Resume</span>
@@ -260,7 +295,7 @@ const Act3Portfolio = ({ isMobile }) => {
           </div>
           
           {/* Live Intelligence Terminal */}
-          <div>
+          <div className="transform hover:scale-105 transition-transform duration-500">
             <LiveTerminal />
           </div>
         </div>
@@ -272,29 +307,48 @@ const Act3Portfolio = ({ isMobile }) => {
       {/* Education Section */}
       <EducationSection />
 
-      {/* Projects Section */}
+      {/* Professional Projects Section */}
       <section 
         id="projects" 
-        className="relative min-h-screen px-4 md:px-12 py-24"
+        className="relative min-h-screen px-4 md:px-12 py-32"
         data-testid="projects-section"
       >
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Projects
-          </h2>
+          {/* Professional Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-block mb-4">
+              <span className="px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-sm font-semibold">
+                Portfolio
+              </span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-heading font-black mb-6 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
+              Featured Projects
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Explore my latest work in AI, machine learning, and intelligent systems
+            </p>
+          </div>
 
           {loading ? (
             <div className="flex items-center justify-center py-24">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-cyan-400 border-t-transparent" />
+              <div className="relative">
+                <div className="animate-spin rounded-full h-20 w-20 border-4 border-cyan-400 border-t-transparent" />
+                <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-xl animate-pulse" />
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project) => (
-                <EnhancedProjectCard
+              {projects.map((project, index) => (
+                <div 
                   key={project.id}
-                  project={project}
-                  onClick={() => setSelectedProject(project)}
-                />
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  className="animate-fade-in-up"
+                >
+                  <EnhancedProjectCard
+                    project={project}
+                    onClick={() => setSelectedProject(project)}
+                  />
+                </div>
               ))}
             </div>
           )}
@@ -310,57 +364,102 @@ const Act3Portfolio = ({ isMobile }) => {
       {/* Publication Section */}
       <PublicationSection />
 
-      {/* Skills Constellation */}
+      {/* Professional Skills Constellation */}
       <section 
         id="skillsconstellation" 
-        className="relative min-h-screen px-4 md:px-12 py-24"
+        className="relative min-h-screen px-4 md:px-12 py-32"
         data-testid="skills-constellation-section"
       >
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Skills Constellation
-          </h2>
-          <div className="glass rounded-3xl p-12 min-h-[500px] flex items-center justify-center"
+        <div className="max-w-7xl mx-auto">
+          {/* Professional Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-block mb-4">
+              <span className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-400 text-sm font-semibold">
+                Technical Expertise
+              </span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-heading font-black mb-6 bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">
+              Skills Constellation
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              An interactive visualization of my technical skills and expertise
+            </p>
+          </div>
+          
+          <div className="glass rounded-3xl p-16 min-h-[600px] flex items-center justify-center relative overflow-hidden"
             style={{
-              background: 'rgba(0, 20, 40, 0.4)',
-              backdropFilter: 'blur(10px)',
+              background: 'linear-gradient(135deg, rgba(0, 20, 40, 0.8) 0%, rgba(0, 40, 80, 0.6) 100%)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(0, 212, 255, 0.3)',
+              boxShadow: '0 8px 32px rgba(0, 212, 255, 0.1)',
             }}
           >
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5"></div>
             <SkillConstellation />
           </div>
         </div>
       </section>
 
-      {/* Vision Timeline */}
+      {/* Professional Vision Timeline */}
       <section 
         id="vision" 
-        className="relative min-h-screen px-4 md:px-12 py-24"
+        className="relative min-h-screen px-4 md:px-12 py-32"
         data-testid="vision-section"
       >
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center glow-blue">
-            Vision Timeline
-          </h2>
+        <div className="max-w-6xl mx-auto">
+          {/* Professional Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-block mb-4">
+              <span className="px-4 py-2 rounded-full bg-purple-500/10 border border-purple-400/30 text-purple-400 text-sm font-semibold">
+                Journey
+              </span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-heading font-black mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+              Vision Timeline
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              From student to innovator - my journey in AI and technology
+            </p>
+          </div>
+          
           <div className="relative">
-            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-600 via-cyan-400 to-cyan-600" />
-            <div className="space-y-16">
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-600 via-cyan-400 to-blue-600 rounded-full" 
+              style={{
+                boxShadow: '0 0 20px rgba(0, 212, 255, 0.5)',
+              }}
+            />
+            <div className="space-y-20">
               {[
-                { title: 'Past', subtitle: 'Student', desc: 'Built foundational knowledge in CS and AI', year: '2020-2023' },
-                { title: 'Present', subtitle: 'AI Engineer', desc: 'Creating intelligent systems and solutions', year: '2024-2026' },
-                { title: 'Future', subtitle: 'Tech Founder', desc: 'Leading innovation in AI-driven products', year: '2027+' },
+                { title: 'Past', subtitle: 'Student & Learner', desc: 'Built foundational knowledge in Computer Science and Artificial Intelligence', year: '2020-2023', icon: '🎓', color: 'from-purple-500 to-pink-500' },
+                { title: 'Present', subtitle: 'AI Engineer', desc: 'Creating intelligent systems and innovative solutions for real-world problems', year: '2024-2026', icon: '🚀', color: 'from-cyan-500 to-blue-500' },
+                { title: 'Future', subtitle: 'Tech Founder & Innovator', desc: 'Leading innovation in AI-driven products and building the next generation of intelligent systems', year: '2027+', icon: '⚡', color: 'from-blue-500 to-purple-500' },
               ].map((phase, index) => (
                 <div key={index} className="relative flex items-center">
-                  <div className="absolute left-8 md:left-1/2 w-4 h-4 bg-cyan-400 rounded-full shadow-lg" style={{
-                    boxShadow: '0 0 20px rgba(0, 212, 255, 0.8)',
+                  <div className="absolute left-8 md:left-1/2 w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full shadow-lg flex items-center justify-center" style={{
+                    boxShadow: '0 0 30px rgba(0, 212, 255, 0.8)',
                     transform: 'translate(-50%, 0)',
-                  }} />
-                  <div className={`ml-16 md:ml-0 ${index % 2 === 0 ? 'md:pr-16' : 'md:pl-16 md:ml-auto'} md:w-1/2`}>
-                    <div className="glass rounded-2xl p-6">
-                      <div className="text-sm text-cyan-400 font-semibold mb-2">{phase.year}</div>
-                      <h3 className="text-2xl font-heading font-bold mb-2">
-                        {phase.title}: {phase.subtitle}
+                  }}>
+                    <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                  </div>
+                  <div className={`ml-20 md:ml-0 ${index % 2 === 0 ? 'md:pr-20' : 'md:pl-20 md:ml-auto'} md:w-1/2`}>
+                    <div className="glass rounded-3xl p-8 hover:scale-105 transition-transform duration-300"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(0, 20, 40, 0.8) 0%, rgba(0, 30, 60, 0.6) 100%)',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(0, 212, 255, 0.3)',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                      }}
+                    >
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-4xl">{phase.icon}</span>
+                        <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${phase.color} text-white text-xs font-bold`}>
+                          {phase.year}
+                        </div>
+                      </div>
+                      <h3 className="text-3xl font-heading font-bold mb-3 text-white">
+                        {phase.title}: <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">{phase.subtitle}</span>
                       </h3>
-                      <p className="text-gray-400">{phase.desc}</p>
+                      <p className="text-gray-300 leading-relaxed">{phase.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -390,65 +489,86 @@ const Act3Portfolio = ({ isMobile }) => {
       {/* Testimonials */}
       <TestimonialsSection />
 
-      {/* Contact */}
+      {/* Professional Contact Section */}
       <section 
         id="contact" 
-        className="relative min-h-screen px-4 md:px-12 py-24 flex items-center justify-center"
+        className="relative min-h-screen px-4 md:px-12 py-32 flex items-center justify-center"
         data-testid="contact-section"
       >
         <div className="max-w-6xl w-full">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-16 text-center bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            Let's Connect
-          </h2>
+          {/* Professional Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-block mb-4">
+              <span className="px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 text-sm font-semibold">
+                Get In Touch
+              </span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-heading font-black mb-6 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
+              Let's Build Something Amazing
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Have a project in mind? Let's discuss how we can work together
+            </p>
+          </div>
           
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-10">
             {/* Contact Form */}
             <ContactForm />
 
-            {/* Social Links */}
+            {/* Professional Social Links */}
             <div className="space-y-6">
-              <div className="glass rounded-3xl p-8"
+              <div className="glass rounded-3xl p-10"
                 style={{
-                  background: 'rgba(0, 20, 40, 0.6)',
+                  background: 'linear-gradient(135deg, rgba(0, 20, 40, 0.8) 0%, rgba(0, 30, 60, 0.6) 100%)',
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(0, 212, 255, 0.3)',
+                  boxShadow: '0 8px 32px rgba(0, 212, 255, 0.1)',
                 }}
               >
-                <h3 className="text-2xl font-heading font-bold mb-6 text-cyan-400">
+                <h3 className="text-2xl font-heading font-bold mb-8 text-white">
                   Connect With Me
                 </h3>
-                <div className="flex flex-wrap gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   {[
-                    { icon: Github, name: 'GitHub', url: 'https://github.com/Prajwal0422' },
-                    { icon: Linkedin, name: 'LinkedIn', url: '#' },
-                    { icon: Instagram, name: 'Instagram', url: '#' },
-                    { icon: Mail, name: 'Email', url: 'mailto:your-email@example.com' },
+                    { icon: Github, name: 'GitHub', url: 'https://github.com/Prajwal0422', color: 'from-gray-600 to-gray-800' },
+                    { icon: Linkedin, name: 'LinkedIn', url: '#', color: 'from-blue-600 to-blue-800' },
+                    { icon: Instagram, name: 'Instagram', url: '#', color: 'from-pink-600 to-purple-800' },
+                    { icon: Mail, name: 'Email', url: 'mailto:your-email@example.com', color: 'from-cyan-600 to-blue-800' },
                   ].map((link) => (
                     <a
                       key={link.name}
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex flex-col items-center gap-3 p-6 rounded-2xl bg-gray-900/50 hover:bg-gray-900 transition-all hover:scale-110 flex-1 min-w-[120px]"
+                      className="group relative flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-800/80 hover:from-gray-800 hover:to-gray-700 transition-all hover:scale-105 border border-gray-700/50 hover:border-cyan-400/50 overflow-hidden"
                     >
-                      <link.icon className="w-12 h-12 group-hover:text-cyan-400 transition-colors" />
-                      <span className="text-sm font-semibold">{link.name}</span>
+                      <div className={`absolute inset-0 bg-gradient-to-br ${link.color} opacity-0 group-hover:opacity-20 transition-opacity`}></div>
+                      <link.icon className="w-10 h-10 text-gray-400 group-hover:text-cyan-400 transition-colors relative z-10" />
+                      <span className="text-sm font-semibold text-gray-300 group-hover:text-white relative z-10">{link.name}</span>
                     </a>
                   ))}
                 </div>
               </div>
 
-              <div className="glass rounded-3xl p-8 text-center"
+              <div className="glass rounded-3xl p-8"
                 style={{
-                  background: 'rgba(0, 20, 40, 0.6)',
+                  background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 100, 255, 0.05) 100%)',
                   backdropFilter: 'blur(20px)',
                   border: '1px solid rgba(0, 212, 255, 0.3)',
                 }}
               >
-                <p className="text-gray-400 mb-4">Open to opportunities and collaborations</p>
-                <p className="text-sm text-gray-600">
-                  Press <kbd className="px-2 py-1 bg-gray-800 rounded">Ctrl+K</kbd> for quick navigation
-                </p>
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse mt-1"></div>
+                  <div>
+                    <p className="text-white font-semibold mb-1">Available for Opportunities</p>
+                    <p className="text-gray-400 text-sm">Open to freelance projects and full-time positions</p>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-cyan-400/20">
+                  <p className="text-sm text-gray-500 text-center">
+                    Press <kbd className="px-2 py-1 bg-gray-800 rounded text-cyan-400 border border-cyan-400/30">Ctrl+K</kbd> for quick navigation
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -481,6 +601,37 @@ const Act3Portfolio = ({ isMobile }) => {
         @keyframes shine {
           0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6)); }
           50% { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1)); }
+        }
+        
+        @keyframes gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in-up {
+          animation: fade-in-up 0.6s ease-out forwards;
+          opacity: 0;
+        }
+        
+        kbd {
+          font-family: ui-monospace, monospace;
+          font-size: 0.875rem;
         }
       `}</style>
     </div>
