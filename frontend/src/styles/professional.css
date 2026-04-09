@@ -1,0 +1,160 @@
+/* Professional Portfolio Styles */
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Professional Gradient Animations */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 5s ease infinite;
+}
+
+/* Professional Card Hover Effects */
+.professional-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.professional-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+}
+
+/* Professional Button Styles */
+.btn-professional {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-professional::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-professional:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Professional Text Glow */
+.text-glow {
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
+               0 0 40px rgba(0, 212, 255, 0.3);
+}
+
+/* Professional Section Dividers */
+.section-divider {
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(0, 212, 255, 0.5) 50%, 
+    transparent 100%);
+}
+
+/* Professional Loading Animation */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+  }
+}
+
+.loading-pulse {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Professional Scroll Indicator */
+.scroll-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    #00d4ff 0%, 
+    #0066ff 50%, 
+    #9933ff 100%);
+  transform-origin: left;
+  z-index: 9999;
+}
+
+/* Professional Glassmorphism */
+.glass-professional {
+  background: rgba(0, 20, 40, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Professional Hover Lift */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+}
+
+/* Professional Badge */
+.badge-professional {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 255, 0.1) 0%, 
+    rgba(0, 100, 255, 0.1) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #00d4ff;
+}
+
+/* Professional Timeline */
+.timeline-line {
+  background: linear-gradient(180deg,
+    rgba(0, 212, 255, 0.8) 0%,
+    rgba(0, 100, 255, 0.8) 50%,
+    rgba(153, 51, 255, 0.8) 100%);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+/* Responsive Professional Spacing */
+@media (max-width: 768px) {
+  .professional-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-padding {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .section-padding {
+    padding: 5rem 3rem;
+  }
+}
