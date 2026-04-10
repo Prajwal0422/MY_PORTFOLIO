@@ -204,7 +204,7 @@ const Act3Portfolio = ({ isMobile }) => {
             />
             <div className="hidden md:block">
               <div className="text-lg font-bold text-white tracking-wide">Prajwal Jain</div>
-              <div className="text-xs text-cyan-400">AI Engineer</div>
+              <div className="text-xs text-cyan-400">AI Enthusiast</div>
             </div>
           </div>
 
@@ -254,21 +254,21 @@ const Act3Portfolio = ({ isMobile }) => {
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-300 font-body leading-relaxed max-w-xl">
-              Engineering Intelligence. Creating Impact. Building the future with AI-driven solutions.
+              Passionate AI enthusiast eager to learn and contribute. Building innovative solutions with cutting-edge technology.
             </p>
             
             {/* Professional Stats */}
             <div className="flex flex-wrap gap-8 py-4">
               <div>
-                <div className="text-3xl font-bold text-cyan-400">50+</div>
+                <div className="text-3xl font-bold text-cyan-400">15+</div>
                 <div className="text-sm text-gray-400">Projects</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-cyan-400">5+</div>
-                <div className="text-sm text-gray-400">Years Experience</div>
+                <div className="text-3xl font-bold text-cyan-400">Fresher</div>
+                <div className="text-sm text-gray-400">Ready to Learn</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-cyan-400">10+</div>
+                <div className="text-3xl font-bold text-cyan-400">5+</div>
                 <div className="text-sm text-gray-400">Certifications</div>
               </div>
             </div>
