@@ -1,92 +1,30 @@
-// Analytics utilities for tracking user interactions
-
 /**
- * Track page view
+ * Analytics utilities for tracking user interactions
  */
-export const trackPageView = (pageName) => {
+
+export const trackEvent = (category, action, label) => {
   if (window.gtag) {
-    window.gtag('event', 'page_view', {
-      page_title: pageName,
-      page_location: window.location.href,
-      page_path: window.location.pathname,
+    window.gtag('event', action, {
+      event_category: category,
+      event_label: label,
     });
   }
-  console.log('Page view:', pageName);
+  console.log(`Analytics: ${category} - ${action} - ${label}`);
 };
 
-/**
- * Track custom event
- */
-export const trackEvent = (eventName, eventParams = {}) => {
+export const trackPageView = (path) => {
   if (window.gtag) {
-    window.gtag('event', eventName, eventParams);
+    window.gtag('config', 'GA_MEASUREMENT_ID', {
+      page_path: path,
+    });
   }
-  console.log('Event:', eventName, eventParams);
+  console.log(`Page view: ${path}`);
 };
 
-/**
- * Track button click
- */
-export const trackButtonClick = (buttonName, location) => {
-  trackEvent('button_click', {
-    button_name: buttonName,
-    location: location,
-  });
+export const trackProjectClick = (projectName) => {
+  trackEvent('Projects', 'click', projectName);
 };
 
-/**
- * Track project view
- */
-export const trackProjectView = (projectName) => {
-  trackEvent('project_view', {
-    project_name: projectName,
-  });
-};
-
-/**
- * Track section scroll
- */
-export const trackSectionScroll = (sectionName) => {
-  trackEvent('section_scroll', {
-    section_name: sectionName,
-  });
-};
-
-/**
- * Track download
- */
 export const trackDownload = (fileName) => {
-  trackEvent('file_download', {
-    file_name: fileName,
-  });
-};
-
-/**
- * Track external link click
- */
-export const trackExternalLink = (url, linkName) => {
-  trackEvent('external_link_click', {
-    url: url,
-    link_name: linkName,
-  });
-};
-
-/**
- * Track form submission
- */
-export const trackFormSubmission = (formName, success = true) => {
-  trackEvent('form_submission', {
-    form_name: formName,
-    success: success,
-  });
-};
-
-/**
- * Track error
- */
-export const trackError = (errorMessage, errorLocation) => {
-  trackEvent('error', {
-    error_message: errorMessage,
-    error_location: errorLocation,
-  });
+  trackEvent('Downloads', 'resume', fileName);
 };
