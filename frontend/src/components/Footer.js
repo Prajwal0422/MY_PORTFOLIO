@@ -31,7 +31,7 @@ const Footer = () => {
               PRAJWAL Y JAIN
             </h3>
             <p className="text-gray-400 text-sm">
-              AI Engineer & Developer crafting intelligent solutions for tomorrow's challenges.
+              Computer Science undergraduate focused on Applied AI &amp; Data Science, building AI-enabled software systems.
             </p>
           </div>
 

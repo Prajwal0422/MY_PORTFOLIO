@@ -107,7 +107,7 @@ const Preloader = ({ onComplete }) => {
         <h2 className="text-3xl font-heading font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent mb-2">
           PRAJWAL Y JAIN
         </h2>
-        <p className="text-gray-400 text-center text-sm">AI Engineer & Developer</p>
+        <p className="text-gray-400 text-center text-sm">AI &amp; Data Science Undergraduate</p>
       </div>
 
       {/* Progress bar */}

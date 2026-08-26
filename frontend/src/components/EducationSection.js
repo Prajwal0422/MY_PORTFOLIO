@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { GraduationCap } from 'lucide-react';
+import { education } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -27,14 +28,6 @@ const EducationSection = () => {
       }
     );
   }, []);
-
-  const education = {
-    degree: "Bachelor of Engineering in Computer Science",
-    university: "Visvesvaraya Technological University",
-    cgpa: "8.5",
-    year: "2020 - 2024",
-    location: "Karnataka, India"
-  };
 
   return (
     <section
@@ -87,12 +80,12 @@ const EducationSection = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">CGPA</div>
-                    <div className="text-3xl font-bold text-cyan-400">{education.cgpa}/10</div>
+                    <div className="text-sm text-gray-500 mb-1">CGPA ({education.cgpaPeriod})</div>
+                    <div className="text-3xl font-bold text-cyan-400">{education.cgpa}/{education.cgpaScale}</div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">Duration</div>
-                    <div className="text-xl font-semibold text-white">{education.year}</div>
+                    <div className="text-sm text-gray-500 mb-1">Completion</div>
+                    <div className="text-xl font-semibold text-white">{education.completion}</div>
                   </div>
                 </div>
               </div>

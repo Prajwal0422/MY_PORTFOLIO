@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import StatsCounter from './StatsCounter';
+import { about } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,7 +11,7 @@ const AboutSection = () => {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const aboutText = "Passionate AI Engineer specializing in Natural Language Processing, Machine Learning, and Intelligent Systems. Focused on building innovative solutions that leverage cutting-edge AI technologies to solve real-world problems. Experienced in developing end-to-end ML pipelines, NLP applications, and deploying scalable AI systems.";
+  const aboutText = about.summary;
 
   useEffect(() => {
     // Scroll trigger for typing animation
@@ -76,9 +77,9 @@ const AboutSection = () => {
           <div className="mt-8">
             <StatsCounter
               stats={[
-                { value: 15, suffix: '+', label: 'Projects Completed' },
-                { value: 8, suffix: '.5', label: 'CGPA' },
-                { value: 5, suffix: '+', label: 'Certifications' },
+                { value: 3, suffix: '', label: 'Featured Projects' },
+                { value: 8, suffix: '.6', label: 'CGPA (Till 6th Sem)' },
+                { value: 4, suffix: '', label: 'Certifications' },
                 { value: 100, suffix: '%', label: 'Dedication' },
               ]}
             />

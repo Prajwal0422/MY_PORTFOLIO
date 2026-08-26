@@ -254,21 +254,21 @@ const Act3Portfolio = ({ isMobile }) => {
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-300 font-body leading-relaxed max-w-xl">
-              Passionate AI enthusiast eager to learn and contribute. Building innovative solutions with cutting-edge technology.
+              Computer Science undergraduate focused on Applied AI &amp; Data Science — learning by building AI-enabled software systems with Python, machine learning, and NLP.
             </p>
             
             {/* Professional Stats */}
             <div className="flex flex-wrap gap-8 py-4">
               <div>
-                <div className="text-3xl font-bold text-cyan-400">15+</div>
-                <div className="text-sm text-gray-400">Projects</div>
+                <div className="text-3xl font-bold text-cyan-400">3</div>
+                <div className="text-sm text-gray-400">Featured Projects</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-cyan-400">Fresher</div>
                 <div className="text-sm text-gray-400">Ready to Learn</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-cyan-400">5+</div>
+                <div className="text-3xl font-bold text-cyan-400">4</div>
                 <div className="text-sm text-gray-400">Certifications</div>
               </div>
             </div>
