@@ -8,8 +8,16 @@ const ProjectStoryMode = ({ project, onClose }) => {
 
   useEffect(() => {
     if (project) {
+      // Remember what had focus so we can restore it when the modal closes
+      const previouslyFocused = document.activeElement;
+
       // Prevent body scroll
       document.body.style.overflow = 'hidden';
+
+      // Move keyboard focus into the dialog
+      if (contentRef.current) {
+        contentRef.current.focus({ preventScroll: true });
+      }
 
       // Cinematic entrance animation
       const tl = gsap.timeline();
@@ -49,6 +57,10 @@ const ProjectStoryMode = ({ project, onClose }) => {
       return () => {
         document.body.style.overflow = 'auto';
         document.removeEventListener('keydown', handleEsc);
+        // Restore focus to the element that opened the modal
+        if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+          previouslyFocused.focus();
+        }
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,6 +93,14 @@ const ProjectStoryMode = ({ project, onClose }) => {
 
   if (!project) return null;
 
+  // Support both curated projects (tech/githubUrl/highlights) and
+  // live GitHub API projects (topics/html_url/stargazers_count/...)
+  const techTags = project.tech || project.topics || [];
+  const repoUrl = project.githubUrl || project.html_url;
+  const hasStats =
+    typeof project.stargazers_count === 'number' ||
+    typeof project.forks_count === 'number';
+
   return (
     <div
       ref={modalRef}
@@ -91,7 +111,11 @@ const ProjectStoryMode = ({ project, onClose }) => {
     >
       <div
         ref={contentRef}
-        className="modal-content relative max-w-4xl w-full max-h-[90vh] overflow-y-auto glass rounded-3xl p-8 md:p-12"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="project-story-title"
+        tabIndex={-1}
+        className="modal-content relative max-w-4xl w-full max-h-[90vh] overflow-y-auto glass rounded-3xl p-8 md:p-12 focus:outline-none"
         style={{
           background: 'rgba(0, 20, 40, 0.8)',
           backdropFilter: 'blur(20px)',
@@ -115,7 +139,7 @@ const ProjectStoryMode = ({ project, onClose }) => {
         </button>
 
         {/* Title */}
-        <h1 className="story-title text-4xl md:text-5xl font-heading font-bold mb-6 glow-blue">
+        <h1 id="project-story-title" className="story-title text-4xl md:text-5xl font-heading font-bold mb-6 glow-blue">
           {project.name}
         </h1>
 
@@ -126,7 +150,7 @@ const ProjectStoryMode = ({ project, onClose }) => {
               {project.language}
             </span>
           )}
-          {project.topics?.slice(0, 5).map((topic) => (
+          {techTags.slice(0, 5).map((topic) => (
             <span
               key={topic}
               className="story-tech px-4 py-2 bg-cyan-900/30 rounded-full text-cyan-400 border border-cyan-500/30"
@@ -141,39 +165,63 @@ const ProjectStoryMode = ({ project, onClose }) => {
           <div>
             <h3 className="text-2xl font-heading font-bold mb-3 text-cyan-400">📋 Overview</h3>
             <p className="text-lg text-gray-300 leading-relaxed">
-              {project.description || 'An innovative project showcasing technical excellence.'}
+              {project.description || 'No description available.'}
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          {project.highlights?.length > 0 && (
             <div>
-              <h4 className="text-xl font-semibold mb-2 text-cyan-400">⭐ Stars</h4>
-              <p className="text-3xl font-bold">{project.stargazers_count}</p>
+              <h3 className="text-2xl font-heading font-bold mb-3 text-cyan-400">✨ Highlights</h3>
+              <ul className="space-y-2">
+                {project.highlights.map((highlight) => (
+                  <li key={highlight} className="text-lg text-gray-300 leading-relaxed flex gap-3">
+                    <span className="text-cyan-400 shrink-0">▹</span>
+                    {highlight}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-2 text-cyan-400">🔀 Forks</h4>
-              <p className="text-3xl font-bold">{project.forks_count}</p>
-            </div>
-          </div>
+          )}
 
-          <div>
-            <h4 className="text-xl font-semibold mb-2 text-cyan-400">📅 Last Updated</h4>
-            <p className="text-lg">{new Date(project.updated_at).toLocaleDateString('en-US', { 
-              year: 'numeric', month: 'long', day: 'numeric' 
-            })}</p>
-          </div>
+          {hasStats && (
+            <div className="grid md:grid-cols-2 gap-6">
+              {typeof project.stargazers_count === 'number' && (
+                <div>
+                  <h4 className="text-xl font-semibold mb-2 text-cyan-400">⭐ Stars</h4>
+                  <p className="text-3xl font-bold">{project.stargazers_count}</p>
+                </div>
+              )}
+              {typeof project.forks_count === 'number' && (
+                <div>
+                  <h4 className="text-xl font-semibold mb-2 text-cyan-400">🔀 Forks</h4>
+                  <p className="text-3xl font-bold">{project.forks_count}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {project.updated_at && (
+            <div>
+              <h4 className="text-xl font-semibold mb-2 text-cyan-400">📅 Last Updated</h4>
+              <p className="text-lg">{new Date(project.updated_at).toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+              })}</p>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 pt-4">
-            <a
-              href={project.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-8 py-4 bg-cyan-600 hover:bg-cyan-500 rounded-full font-semibold transition-all shadow-lg hover:shadow-cyan-500/50"
-            >
-              <Github className="w-5 h-5" />
-              View Repository
-            </a>
+            {repoUrl && (
+              <a
+                href={repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-8 py-4 bg-cyan-600 hover:bg-cyan-500 rounded-full font-semibold transition-all shadow-lg hover:shadow-cyan-500/50"
+              >
+                <Github className="w-5 h-5" />
+                View Repository
+              </a>
+            )}
             {project.homepage && (
               <a
                 href={project.homepage}

@@ -35,14 +35,25 @@ const EnhancedProjectCard = ({ project, onClick }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
     <div
       ref={cardRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`View details of ${project.name}`}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
-      className="relative glass rounded-2xl p-6 cursor-pointer transition-all duration-300"
+      className="relative glass rounded-2xl p-6 cursor-pointer transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
       style={{
         background: 'rgba(0, 20, 40, 0.4)',
         backdropFilter: 'blur(10px)',
