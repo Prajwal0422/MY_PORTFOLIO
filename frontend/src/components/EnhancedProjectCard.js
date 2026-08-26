@@ -74,9 +74,16 @@ const EnhancedProjectCard = ({ project, onClick }) => {
       />
 
       <div className="relative z-10">
-        <h3 className="text-xl font-heading font-bold text-cyan-400 mb-3">
-          {project.name}
-        </h3>
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <h3 className="text-xl font-heading font-bold text-cyan-400">
+            {project.name}
+          </h3>
+          {project.flagship && (
+            <span className="shrink-0 text-[10px] font-bold tracking-wider uppercase px-2 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300">
+              Flagship
+            </span>
+          )}
+        </div>
         <p className="text-sm text-gray-400 line-clamp-3 mb-4">
           {project.description || 'No description available'}
         </p>
@@ -86,16 +93,28 @@ const EnhancedProjectCard = ({ project, onClick }) => {
               {project.language}
             </span>
           )}
+          {(project.tech || project.topics || []).slice(0, 4).map((tag) => (
+            <span
+              key={tag}
+              className="px-3 py-1 bg-cyan-900/30 rounded-full border border-cyan-500/30 text-cyan-300"
+            >
+              {tag}
+            </span>
+          ))}
+          {typeof project.stargazers_count === 'number' && (
           <span className="flex items-center gap-1 text-gray-400">
             <span className="w-2 h-2 bg-yellow-400 rounded-full" />
             {project.stargazers_count}
           </span>
+          )}
+          {typeof project.forks_count === 'number' && (
           <span className="flex items-center gap-1 text-gray-400">
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 16 16">
               <path d="M5 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm0 2.122a2.25 2.25 0 10-1.5 0v.878A2.25 2.25 0 005.75 8.5h1.5v2.128a2.251 2.251 0 101.5 0V8.5h1.5a2.25 2.25 0 002.25-2.25v-.878a2.25 2.25 0 10-1.5 0v.878a.75.75 0 01-.75.75h-4.5A.75.75 0 015 6.25v-.878z"/>
             </svg>
             {project.forks_count}
           </span>
+          )}
         </div>
       </div>
     </div>

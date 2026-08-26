@@ -29,6 +29,7 @@ import ContactForm from './ContactForm';
 import MobileMenu from './MobileMenu';
 import Footer from './Footer';
 import { VideoOptimizer, debounce } from '../utils/performance';
+import { featuredProjects } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -325,33 +326,61 @@ const Act3Portfolio = ({ isMobile }) => {
               Featured Projects
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Explore my latest work in AI, machine learning, and intelligent systems
+              Curated academic projects in AI, machine learning, and intelligent systems
             </p>
           </div>
 
-          {loading ? (
-            <div className="flex items-center justify-center py-24">
-              <div className="relative">
-                <div className="animate-spin rounded-full h-20 w-20 border-4 border-cyan-400 border-t-transparent" />
-                <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-xl animate-pulse" />
+          {/* Curated Featured Projects */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-testid="featured-projects-grid">
+            {featuredProjects.map((project, index) => (
+              <div 
+                key={project.id}
+                style={{ animationDelay: `${index * 0.1}s` }}
+                className="animate-fade-in-up"
+              >
+                <EnhancedProjectCard
+                  project={project}
+                  onClick={() => setSelectedProject(project)}
+                />
               </div>
+            ))}
+          </div>
+
+          {/* More Projects — live GitHub repositories */}
+          <div className="mt-32">
+            <div className="text-center mb-16">
+              <h3 className="text-4xl md:text-5xl font-heading font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">
+                More Projects
+              </h3>
+              <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+                Latest repositories from my GitHub
+              </p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project, index) => (
-                <div 
-                  key={project.id}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                  className="animate-fade-in-up"
-                >
-                  <EnhancedProjectCard
-                    project={project}
-                    onClick={() => setSelectedProject(project)}
-                  />
+
+            {loading ? (
+              <div className="flex items-center justify-center py-24">
+                <div className="relative">
+                  <div className="animate-spin rounded-full h-20 w-20 border-4 border-cyan-400 border-t-transparent" />
+                  <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-xl animate-pulse" />
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {projects.map((project, index) => (
+                  <div 
+                    key={project.id}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    className="animate-fade-in-up"
+                  >
+                    <EnhancedProjectCard
+                      project={project}
+                      onClick={() => setSelectedProject(project)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
