@@ -22,7 +22,6 @@ import ParticleField from './ParticleField';
 import ScrollProgressBar from './ScrollProgressBar';
 import FloatingActionMenu from './FloatingActionMenu';
 import GitHubHeatmap from './GitHubHeatmap';
-import TestimonialsSection from './TestimonialsSection';
 import SectionDivider from './SectionDivider';
 import KeyboardShortcuts from './KeyboardShortcuts';
 import ContactForm from './ContactForm';
@@ -512,11 +511,6 @@ const Act3Portfolio = ({ isMobile }) => {
           <GitHubHeatmap username="Prajwal0422" />
         </div>
       </section>
-
-      <SectionDivider variant="dots" />
-
-      {/* Testimonials */}
-      <TestimonialsSection />
 
       {/* Professional Contact Section */}
       <section 
