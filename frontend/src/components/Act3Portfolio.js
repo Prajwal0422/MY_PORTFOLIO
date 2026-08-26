@@ -28,7 +28,7 @@ import ContactForm from './ContactForm';
 import MobileMenu from './MobileMenu';
 import Footer from './Footer';
 import { VideoOptimizer, debounce } from '../utils/performance';
-import { featuredProjects } from '../data/portfolioData';
+import { featuredProjects, personal } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -285,12 +285,14 @@ const Act3Portfolio = ({ isMobile }) => {
                   </svg>
                 </span>
               </button>
-              <button
+              <a
+                href={personal.resumeUrl}
+                download={personal.resumeFilename}
                 className="group relative px-10 py-4 bg-white/5 hover:bg-white/10 rounded-xl font-semibold transition-all border-2 border-cyan-500/50 hover:border-cyan-400 flex items-center gap-2 backdrop-blur-sm transform hover:scale-105"
               >
                 <Download className="w-5 h-5" />
                 <span>Download Resume</span>
-              </button>
+              </a>
             </div>
           </div>
           

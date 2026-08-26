@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { Download, FileText, Sparkles } from 'lucide-react';
+import { personal } from '../data/portfolioData';
 
 const ResumeDownload = () => {
   const buttonRef = useRef(null);
@@ -27,20 +28,6 @@ const ResumeDownload = () => {
     });
   }, []);
 
-  const handleDownload = () => {
-    // Trigger download animation
-    gsap.to(buttonRef.current, {
-      scale: 0.95,
-      duration: 0.1,
-      yoyo: true,
-      repeat: 1,
-      onComplete: () => {
-        // Add your resume PDF link here
-        window.open('/resume.pdf', '_blank');
-      }
-    });
-  };
-
   return (
     <div className="fixed bottom-8 right-8 z-50">
       <div className="relative">
@@ -55,10 +42,12 @@ const ResumeDownload = () => {
         />
 
         {/* Button */}
-        <button
+        <a
           ref={buttonRef}
-          onClick={handleDownload}
-          className="relative group"
+          href={personal.resumeUrl}
+          download={personal.resumeFilename}
+          aria-label={`Download resume (${personal.resumeFilename})`}
+          className="relative group block"
           style={{
             background: 'linear-gradient(135deg, rgba(0, 212, 255, 0.9) 0%, rgba(0, 150, 255, 1) 100%)',
             padding: '16px 32px',
@@ -102,7 +91,7 @@ const ResumeDownload = () => {
               animation: 'shimmer 3s infinite',
             }}
           />
-        </button>
+        </a>
       </div>
 
       <style>{`
