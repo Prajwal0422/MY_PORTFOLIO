@@ -6,14 +6,14 @@ const SkillConstellation = () => {
   const [hoveredSkill, setHoveredSkill] = useState(null);
 
   const skills = [
-    { name: 'Python', x: 150, y: 100, level: 90 },
-    { name: 'Machine Learning', x: 350, y: 80, level: 85 },
-    { name: 'Deep Learning', x: 550, y: 120, level: 80 },
-    { name: 'Data Science', x: 250, y: 250, level: 88 },
-    { name: 'AI Systems', x: 450, y: 230, level: 82 },
-    { name: 'Web Dev', x: 150, y: 350, level: 85 },
-    { name: 'APIs', x: 350, y: 380, level: 87 },
-    { name: 'Databases', x: 550, y: 340, level: 83 },
+    { name: 'Python', x: 150, y: 100, level: 'Working Knowledge', barWidth: 75 },
+    { name: 'Machine Learning', x: 350, y: 80, level: 'Academic', barWidth: 60 },
+    { name: 'NLP', x: 550, y: 120, level: 'Academic', barWidth: 60 },
+    { name: 'Data Handling', x: 250, y: 250, level: 'Working Knowledge', barWidth: 70 },
+    { name: 'ClinicalBERT', x: 450, y: 230, level: 'Academic', barWidth: 55 },
+    { name: 'EfficientNet-B4', x: 150, y: 350, level: 'Academic', barWidth: 55 },
+    { name: 'Pandas & NumPy', x: 350, y: 380, level: 'Working Knowledge', barWidth: 70 },
+    { name: 'Git & GitHub', x: 550, y: 340, level: 'Working Knowledge', barWidth: 65 },
   ];
 
   const connections = [
@@ -126,14 +126,14 @@ const SkillConstellation = () => {
               }}
             >
               <div className="text-cyan-400 text-sm font-semibold mb-1">{skill.name}</div>
+              <div className="text-gray-300 text-xs mb-1">{skill.level}</div>
               <div className="flex items-center gap-2">
                 <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-cyan-500 to-blue-500"
-                    style={{ width: `${skill.level}%` }}
+                    style={{ width: `${skill.barWidth}%` }}
                   />
                 </div>
-                <span className="text-xs text-cyan-300">{skill.level}%</span>
               </div>
             </div>
           )}

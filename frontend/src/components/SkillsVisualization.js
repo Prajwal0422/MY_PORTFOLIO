@@ -1,44 +1,12 @@
 import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { skills } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const SkillsVisualization = () => {
   const sectionRef = useRef(null);
-
-  const skillsData = {
-    "Programming": [
-      { name: "Python", level: 90 },
-      { name: "JavaScript", level: 85 },
-      { name: "Java", level: 75 },
-      { name: "C++", level: 70 },
-    ],
-    "AI/ML": [
-      { name: "Machine Learning", level: 88 },
-      { name: "Deep Learning", level: 85 },
-      { name: "Computer Vision", level: 80 },
-      { name: "Neural Networks", level: 82 },
-    ],
-    "NLP": [
-      { name: "Text Processing", level: 90 },
-      { name: "Sentiment Analysis", level: 85 },
-      { name: "Language Models", level: 83 },
-      { name: "Named Entity Recognition", level: 80 },
-    ],
-    "Tools": [
-      { name: "TensorFlow", level: 85 },
-      { name: "PyTorch", level: 82 },
-      { name: "Scikit-learn", level: 88 },
-      { name: "Git", level: 90 },
-    ],
-    "Web": [
-      { name: "React", level: 85 },
-      { name: "Node.js", level: 80 },
-      { name: "FastAPI", level: 83 },
-      { name: "MongoDB", level: 78 },
-    ],
-  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -78,7 +46,7 @@ const SkillsVisualization = () => {
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {Object.entries(skillsData).map(([category, skills]) => (
+          {skills.map(({ category, items }) => (
             <div
               key={category}
               className="glass rounded-3xl p-8"
@@ -93,11 +61,11 @@ const SkillsVisualization = () => {
               </h3>
 
               <div className="space-y-6">
-                {skills.map((skill) => (
+                {items.map((skill) => (
                   <div key={skill.name}>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-300 font-medium">{skill.name}</span>
-                      <span className="text-cyan-400 font-semibold">{skill.level}%</span>
+                      <span className="text-cyan-400 text-sm font-semibold">{skill.level}</span>
                     </div>
                     <div 
                       className="h-3 bg-gray-800 rounded-full overflow-hidden"
@@ -107,7 +75,7 @@ const SkillsVisualization = () => {
                     >
                       <div
                         className="progress-bar h-full rounded-full relative"
-                        data-width={skill.level}
+                        data-width={skill.barWidth}
                         style={{
                           background: 'linear-gradient(90deg, rgba(0, 212, 255, 0.8) 0%, rgba(0, 150, 255, 1) 100%)',
                           boxShadow: '0 0 10px rgba(0, 212, 255, 0.5)',
