@@ -1,7 +1,8 @@
 import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { FileText, ExternalLink, Users } from 'lucide-react';
+import { FileText } from 'lucide-react';
+import { publication } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,16 +26,6 @@ const PublicationSection = () => {
       }
     );
   }, []);
-
-  const publication = {
-    title: "Advanced Natural Language Processing Techniques for Sentiment Analysis",
-    authors: ["Prajwal Y Jain", "Co-Author Name"],
-    journal: "International Journal of AI Research",
-    year: "2024",
-    abstract: "This research explores novel approaches to sentiment analysis using transformer-based models and attention mechanisms, achieving state-of-the-art results on multiple benchmark datasets.",
-    keywords: ["NLP", "Sentiment Analysis", "Transformers", "Deep Learning"],
-    link: "#"
-  };
 
   return (
     <section
@@ -96,44 +87,37 @@ const PublicationSection = () => {
                   {publication.title}
                 </h3>
 
-                <div className="flex items-center gap-2 text-gray-400 mb-4">
-                  <Users className="w-4 h-4" />
-                  <span className="text-sm">{publication.authors.join(', ')}</span>
-                </div>
-
-                <div className="flex flex-wrap gap-4 text-sm text-gray-400 mb-6">
+                <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-400 mb-6">
                   <span className="text-cyan-400">{publication.journal}</span>
                   <span>•</span>
-                  <span>{publication.year}</span>
+                  <span>Volume {publication.volume}, Issue {publication.issue}</span>
+                  <span>•</span>
+                  <span>{publication.date}</span>
                 </div>
-
-                <p className="text-gray-300 leading-relaxed mb-6">
-                  {publication.abstract}
-                </p>
 
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {publication.keywords.map((keyword, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 rounded-full text-sm"
-                      style={{
-                        background: 'rgba(0, 212, 255, 0.1)',
-                        border: '1px solid rgba(0, 212, 255, 0.3)',
-                        color: '#00d4ff',
-                      }}
-                    >
-                      {keyword}
-                    </span>
-                  ))}
+                  <span
+                    className="px-3 py-1 rounded-full text-sm"
+                    style={{
+                      background: 'rgba(0, 212, 255, 0.1)',
+                      border: '1px solid rgba(0, 212, 255, 0.3)',
+                      color: '#00d4ff',
+                    }}
+                  >
+                    ISSN: {publication.issn}
+                  </span>
                 </div>
 
-                <a
-                  href={publication.link}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-600 hover:bg-cyan-500 transition-all hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/50"
-                >
-                  <span>Read Full Paper</span>
-                  <ExternalLink className="w-4 h-4" />
-                </a>
+                {publication.link && (
+                  <a
+                    href={publication.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-600 hover:bg-cyan-500 transition-all hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/50"
+                  >
+                    <span>Read Full Paper</span>
+                  </a>
+                )}
               </div>
             </div>
           </div>
