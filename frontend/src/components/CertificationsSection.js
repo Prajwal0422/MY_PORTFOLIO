@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Award } from 'lucide-react';
+import { Award, ExternalLink } from 'lucide-react';
 import { certifications } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -77,15 +77,24 @@ const CertificationsSection = () => {
                 />
 
                 <div className="relative z-10">
-                  <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                    style={{
-                      background: 'rgba(0, 212, 255, 0.2)',
-                      border: '1px solid rgba(0, 212, 255, 0.4)',
-                    }}
-                  >
-                    <Award className="w-6 h-6 text-cyan-400" />
-                  </div>
+                  {cert.image ? (
+                    <img
+                      src={cert.image}
+                      alt={`${cert.title} certificate`}
+                      className="w-full h-28 object-cover rounded-xl mb-4 border border-cyan-500/30"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
+                      style={{
+                        background: 'rgba(0, 212, 255, 0.2)',
+                        border: '1px solid rgba(0, 212, 255, 0.4)',
+                      }}
+                    >
+                      <Award className="w-6 h-6 text-cyan-400" />
+                    </div>
+                  )}
 
                   <h3 className="text-lg font-heading font-bold text-white mb-2 line-clamp-2">
                     {cert.title}
@@ -130,9 +139,31 @@ const CertificationsSection = () => {
             <p className="text-xl text-cyan-400 mb-2">{selectedCert.issuer}</p>
             {selectedCert.date && <p className="text-gray-400 mb-6">{selectedCert.date}</p>}
 
+            {selectedCert.image && (
+              <img
+                src={selectedCert.image}
+                alt={`${selectedCert.title} certificate`}
+                className="w-full rounded-2xl mb-6 border border-cyan-500/30"
+              />
+            )}
+
             {selectedCert.description && (
               <p className="text-gray-300 leading-relaxed mb-6">{selectedCert.description}</p>
             )}
+
+            <div className="flex flex-wrap gap-4 mb-6">
+              {selectedCert.verificationUrl && (
+                <a
+                  href={selectedCert.verificationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cyan-600 hover:bg-cyan-500 transition-colors"
+                >
+                  <span>Verify Certificate</span>
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              )}
+            </div>
 
             <button
               onClick={() => setSelectedCert(null)}
