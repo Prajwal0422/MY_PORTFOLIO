@@ -1,40 +1,14 @@
 import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Award, ExternalLink } from 'lucide-react';
+import { Award } from 'lucide-react';
+import { certifications } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const CertificationsSection = () => {
   const sectionRef = useRef(null);
   const [selectedCert, setSelectedCert] = useState(null);
-
-  const certifications = [
-    {
-      title: "Machine Learning Specialization",
-      issuer: "Coursera - Stanford University",
-      date: "2023",
-      skills: ["ML Algorithms", "Neural Networks", "Python"],
-    },
-    {
-      title: "Deep Learning Specialization",
-      issuer: "Coursera - deeplearning.ai",
-      date: "2023",
-      skills: ["CNN", "RNN", "TensorFlow"],
-    },
-    {
-      title: "Natural Language Processing",
-      issuer: "Coursera",
-      date: "2023",
-      skills: ["NLP", "Transformers", "BERT"],
-    },
-    {
-      title: "Python for Data Science",
-      issuer: "IBM",
-      date: "2022",
-      skills: ["Python", "Pandas", "NumPy"],
-    },
-  ];
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -65,7 +39,7 @@ const CertificationsSection = () => {
   return (
     <section
       ref={sectionRef}
-      id="certificates"
+      id="certifications"
       className="relative min-h-screen px-4 md:px-12 py-24"
       data-testid="certificates-section"
     >
@@ -117,27 +91,16 @@ const CertificationsSection = () => {
                     {cert.title}
                   </h3>
                   <p className="text-sm text-cyan-400 mb-2">{cert.issuer}</p>
-                  <p className="text-xs text-gray-500 mb-4">{cert.date}</p>
+                  {cert.date && <p className="text-xs text-gray-500 mb-4">{cert.date}</p>}
 
-                  <div className="flex flex-wrap gap-2">
-                    {cert.skills.slice(0, 2).map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="text-xs px-2 py-1 rounded-full"
-                        style={{
-                          background: 'rgba(0, 212, 255, 0.1)',
-                          border: '1px solid rgba(0, 212, 255, 0.3)',
-                          color: '#00d4ff',
-                        }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
+                  {cert.description && (
+                    <p className="text-xs text-gray-400 leading-relaxed line-clamp-3">
+                      {cert.description}
+                    </p>
+                  )}
 
                   <div className="mt-4 flex items-center gap-2 text-cyan-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                     <span>View Details</span>
-                    <ExternalLink className="w-4 h-4" />
                   </div>
                 </div>
               </div>
@@ -165,23 +128,11 @@ const CertificationsSection = () => {
               {selectedCert.title}
             </h3>
             <p className="text-xl text-cyan-400 mb-2">{selectedCert.issuer}</p>
-            <p className="text-gray-400 mb-6">{selectedCert.date}</p>
-            
-            <div className="flex flex-wrap gap-2 mb-6">
-              {selectedCert.skills.map((skill, idx) => (
-                <span
-                  key={idx}
-                  className="px-4 py-2 rounded-full text-sm"
-                  style={{
-                    background: 'rgba(0, 212, 255, 0.2)',
-                    border: '1px solid rgba(0, 212, 255, 0.4)',
-                    color: '#00d4ff',
-                  }}
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
+            {selectedCert.date && <p className="text-gray-400 mb-6">{selectedCert.date}</p>}
+
+            {selectedCert.description && (
+              <p className="text-gray-300 leading-relaxed mb-6">{selectedCert.description}</p>
+            )}
 
             <button
               onClick={() => setSelectedCert(null)}
