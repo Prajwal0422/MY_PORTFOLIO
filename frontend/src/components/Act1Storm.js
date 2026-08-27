@@ -3,53 +3,72 @@ import gsap from 'gsap';
 
 const Act1Storm = ({ onComplete, isMobile }) => {
   const containerRef = useRef(null);
-  const shieldRef = useRef(null);
   const videoRef = useRef(null);
+  const stormMotionRef = useRef(null);
+  const shieldOuterRef = useRef(null);
+  const introTextRef = useRef(null);
+  const glowRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    // Initial fade in animations
+    const video = videoRef.current;
+    const stormMotion = stormMotionRef.current;
+    const shieldOuter = shieldOuterRef.current;
+    const introText = introTextRef.current;
+    const glow = glowRef.current;
+
+    // Entrance: the storm settles in, then the shield emerges from it
     const tl = gsap.timeline();
 
     tl.fromTo(
-      videoRef.current,
-      { opacity: 0, scale: 1.1 },
-      { opacity: 1, scale: 1, duration: 3, ease: 'power2.inOut' }
+      video,
+      { opacity: 0 },
+      { opacity: 1, duration: 2.5, ease: 'power2.inOut' }
     );
 
     tl.fromTo(
-      shieldRef.current,
+      shieldOuter,
       { opacity: 0, scale: 0.5 },
       { opacity: 1, scale: 1, duration: 2, ease: 'back.out(1.7)' },
       '-=1.5'
     );
 
-    // Glow pulse animation
-    gsap.to(shieldRef.current, {
-      filter: 'drop-shadow(0 0 40px rgba(0, 212, 255, 1)) drop-shadow(0 0 80px rgba(0, 212, 255, 0.5))',
-      duration: 2,
-      ease: 'sine.inOut',
-      yoyo: true,
-      repeat: -1,
-    });
-
     tl.fromTo(
-      '.intro-text',
+      introText,
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 2, ease: 'power2.out' },
       '-=1'
     );
 
-    // Slow background scale for atmosphere
-    gsap.to(videoRef.current, {
-      scale: 1.05,
-      duration: 20,
-      ease: 'none',
-      repeat: -1,
-      yoyo: true,
-    });
+    // Almost imperceptible camera drift through the clouds
+    gsap.fromTo(
+      stormMotion,
+      { scale: 1.04, xPercent: -0.6, yPercent: -0.4 },
+      {
+        scale: 1.09,
+        xPercent: 0.6,
+        yPercent: 0.4,
+        duration: 40,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+      }
+    );
+
+    // Soft breathing of the ambient light behind the shield
+    gsap.fromTo(
+      glow,
+      { opacity: 0.35 },
+      { opacity: 0.55, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true }
+    );
 
     setIsReady(true);
+
+    return () => {
+      tl.kill();
+      gsap.killTweensOf([video, stormMotion, shieldOuter, introText, glow]);
+      if (video) video.pause();
+    };
   }, []);
 
   const handleClick = () => {
@@ -94,55 +113,90 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     <div
       ref={containerRef}
       className="act-container relative w-full h-screen overflow-hidden"
+      style={{ background: '#04060c' }}
       data-testid="act1-storm-container"
     >
-      {/* Storm Background */}
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        data-testid="storm-background-video"
-      >
-        <source src="/assets/storm.mp4" type="video/mp4" />
-      </video>
+      {/* Storm background — slow camera drift lives on the motion wrapper */}
+      <div ref={stormMotionRef} className="absolute inset-0 will-change-transform">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          data-testid="storm-background-video"
+        >
+          <source src="/assets/storm.mp4" type="video/mp4" />
+        </video>
+      </div>
 
-      {/* Dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+      {/* Cinematic color grading — deep blacks, charcoal, dark blue */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(3,5,11,0.88) 0%, rgba(7,12,24,0.35) 42%, rgba(3,5,11,0.9) 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(115deg, rgba(16,28,50,0.32) 0%, rgba(2,4,9,0.05) 50%, rgba(12,22,42,0.3) 100%)',
+        }}
+      />
+
+      {/* Subtle radial focus around the shield */}
+      <div
+        ref={glowRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 42% 38% at 50% 46%, rgba(70,120,180,0.22) 0%, rgba(70,120,180,0.06) 45%, transparent 70%)',
+        }}
+      />
+
+      {/* Vignette */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse 120% 100% at 50% 45%, transparent 55%, rgba(0,0,0,0.55) 100%)',
+        }}
+      />
 
       {/* Content */}
       <div className="relative z-10 h-full px-4">
         {/* Shield - PERFECTLY CENTERED */}
         <div
-          ref={shieldRef}
           role="button"
           tabIndex={0}
           aria-label="Click the shield to continue"
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           className="absolute top-1/2 left-1/2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 rounded-full"
-          style={{
-            filter: 'drop-shadow(0 0 30px rgba(0, 212, 255, 0.8))',
-            transform: 'translate(-50%, -50%)',
-            animation: 'shieldFloat 5s ease-in-out infinite',
-          }}
+          style={{ transform: 'translate(-50%, -50%)' }}
           data-testid="shield-element"
         >
-          <img
-            src="/assets/shield.png"
-            alt="Shield"
-            className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain"
-          />
+          <div ref={shieldOuterRef}>
+            <img
+              src="/assets/shield.png"
+              alt="Shield"
+              className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain"
+            />
+          </div>
         </div>
 
         {/* Typography - Below shield */}
-        <div className="intro-text absolute bottom-32 left-1/2 transform -translate-x-1/2 text-center space-y-6 max-w-4xl w-full px-4">
+        <div
+          ref={introTextRef}
+          className="absolute bottom-32 left-1/2 transform -translate-x-1/2 text-center space-y-6 max-w-4xl w-full px-4"
+        >
           <h1
-            className="text-3xl md:text-4xl lg:text-5xl font-heading tracking-widest"
+            className="intro-text text-3xl md:text-4xl lg:text-5xl font-heading tracking-widest"
             data-testid="intro-quote"
-            style={{ 
+            style={{
               letterSpacing: '0.15em',
               color: '#fff',
               textShadow: '0 0 20px rgba(0, 212, 255, 0.6)',
@@ -164,26 +218,9 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         <img
           src="/assets/logo.png"
           alt="Logo"
-          className="w-12 h-12 md:w-16 md:h-16 object-contain"
-          style={{
-            filter: 'drop-shadow(0 0 10px rgba(0, 212, 255, 0.6))',
-            animation: 'shine 4s ease-in-out infinite',
-          }}
+          className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80"
         />
       </div>
-
-      {/* Animations */}
-      <style>{`
-        @keyframes shieldFloat {
-          0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(0deg); }
-          50% { transform: translate(-50%, -50%) translateY(-20px) rotate(2deg); }
-        }
-        
-        @keyframes shine {
-          0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6)); }
-          50% { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 1)); }
-        }
-      `}</style>
     </div>
   );
 };
