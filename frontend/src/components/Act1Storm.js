@@ -11,6 +11,10 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const introTextRef = useRef(null);
   const hintRef = useRef(null);
   const sweepRef = useRef(null);
+  const boltGroupRef = useRef(null);
+  const energyRef = useRef(null);
+  const flashRef = useRef(null);
+  const afterglowRef = useRef(null);
   const glowRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
   // Guard against re-entry once the activation sequence has begun
@@ -161,33 +165,101 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const handleClick = () => {
     if (!isReady || activatedRef.current) return;
     activatedRef.current = true;
-    // Lightning flash effect
-    const flash = document.createElement('div');
-    flash.style.cssText = `
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle, rgba(200, 230, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 40%, transparent 80%);
-      z-index: 9999;
-      pointer-events: none;
-    `;
-    document.body.appendChild(flash);
 
-    gsap.to(flash, {
-      opacity: 0.9,
-      duration: 0.1,
-      yoyo: true,
-      repeat: 3,
-      onComplete: () => flash.remove(),
-    });
+    // Activation: energy buildup → CRACK → controlled flash.
+    // The impact physics, shockwave, thunder and cinematic transition are
+    // layered onto this same timeline in later refinements.
+    const act = gsap.timeline();
 
-    // Fade out and transition
+    // 0.0–0.35s — energy builds around the shield
+    act.to(
+      energyRef.current,
+      { opacity: 0.85, scale: 1.05, xPercent: -50, yPercent: -50, duration: 0.35, ease: 'power2.in' },
+      0
+    );
+    act.to(
+      shieldGlowRef.current,
+      { opacity: 1, duration: 0.3, ease: 'power2.in' },
+      0
+    );
+
+    // 0.35s — IMPACT: localized electric burst + lightning branches
+    act.fromTo(
+      energyRef.current,
+      { opacity: 0.85 },
+      { opacity: 1, duration: 0.06, yoyo: true, repeat: 1, ease: 'none' },
+      0.35
+    );
+    act.to(
+      boltGroupRef.current,
+      { opacity: 1, rotation: 0.6, xPercent: -50, yPercent: -50, duration: 0.05, ease: 'none' },
+      0.35
+    );
+    act.to(boltGroupRef.current, { opacity: 0.25, duration: 0.05, ease: 'none' }, 0.43);
+    act.to(boltGroupRef.current, { opacity: 0.85, duration: 0.04, ease: 'none' }, 0.5);
+    act.to(boltGroupRef.current, { opacity: 0, duration: 0.2, ease: 'power1.out' }, 0.56);
+    act.to(
+      energyRef.current,
+      { opacity: 0, scale: 1.3, duration: 0.5, ease: 'power2.out' },
+      0.58
+    );
+
+    // Full-screen flash — short, bright, controlled (never a stuck white frame)
+    act.fromTo(
+      flashRef.current,
+      { opacity: 0 },
+      { opacity: 0.92, duration: 0.07, ease: 'power2.out' },
+      0.36
+    );
+    act.to(flashRef.current, { opacity: 0.15, duration: 0.1, ease: 'power1.in' }, 0.45);
+    act.to(flashRef.current, { opacity: 0, duration: 0.3, ease: 'power1.out' }, 0.62);
+
+    // Afterglow lingers briefly as the storm recovers
+    act.fromTo(
+      afterglowRef.current,
+      { opacity: 0 },
+      { opacity: 0.22, duration: 0.12, ease: 'power1.out' },
+      0.5
+    );
+    act.to(afterglowRef.current, { opacity: 0, duration: 0.8, ease: 'power1.inOut' }, 0.7);
+
+    // Fade out and transition to Act 2
     gsap.to(containerRef.current, {
       opacity: 0,
       duration: 1.5,
       ease: 'power2.inOut',
-      delay: 0.5,
+      delay: 0.8,
       onComplete: onComplete,
     });
+  };
+
+  // Procedural lightning branches radiating from the shield.
+  // Deterministic per mount — no assets fabricated, no randomness at impact time.
+  const getBranches = () => {
+    const branches = [];
+    const angles = [-72, -38, -10, 14, 42, 74];
+    angles.forEach((deg, i) => {
+      const rad = (deg * Math.PI) / 180;
+      const dx = Math.sin(rad);
+      const dy = -Math.cos(rad);
+      const length = 150 + (i % 3) * 45;
+      const points = [[0, 0]];
+      let x = 0;
+      let y = 0;
+      const segments = 5;
+      for (let s = 1; s <= segments; s++) {
+        const t = (length / segments) * s;
+        const jag = (s % 2 === 0 ? 1 : -1) * (7 + i * 2);
+        x = dx * t + -dy * jag;
+        y = dy * t + dx * jag;
+        points.push([x, y]);
+      }
+      branches.push({
+        d: points.map((p) => `${p[0]},${p[1]}`).join(' '),
+        width: i % 2 === 0 ? 2.5 : 1.5,
+      });
+    });
+    return branches;
   };
 
   const handleKeyDown = (e) => {
@@ -335,6 +407,42 @@ const Act1Storm = ({ onComplete, isMobile }) => {
                 }}
               />
             </div>
+
+            {/* Energy ring that charges up around the shield on activation */}
+            <div
+              ref={energyRef}
+              className="absolute left-1/2 top-1/2 pointer-events-none"
+              style={{
+                width: '150%',
+                height: '150%',
+                opacity: 0,
+                background:
+                  'radial-gradient(circle, transparent 42%, rgba(150, 200, 255, 0.5) 55%, rgba(90, 150, 220, 0.18) 66%, transparent 78%)',
+              }}
+            />
+
+            {/* Procedural lightning branches — electric blue-white only */}
+            <svg
+              ref={boltGroupRef}
+              className="absolute left-1/2 top-1/2 pointer-events-none"
+              width="400"
+              height="400"
+              viewBox="-200 -200 400 400"
+              style={{ opacity: 0, overflow: 'visible' }}
+              aria-hidden="true"
+            >
+              {getBranches().map((b, i) => (
+                <polyline
+                  key={i}
+                  points={b.d}
+                  fill="none"
+                  stroke={i % 2 === 0 ? 'rgba(215, 235, 255, 0.95)' : 'rgba(150, 195, 245, 0.8)'}
+                  strokeWidth={b.width}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              ))}
+            </svg>
           </div>
         </div>
 
@@ -363,6 +471,28 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           </p>
         </div>
       </div>
+
+      {/* Lightning flash layer — short, bright, controlled */}
+      <div
+        ref={flashRef}
+        className="fixed inset-0 z-30 pointer-events-none"
+        style={{
+          opacity: 0,
+          background:
+            'radial-gradient(circle at 50% 46%, rgba(235, 245, 255, 0.95) 0%, rgba(190, 220, 250, 0.75) 35%, rgba(120, 170, 230, 0.35) 60%, transparent 85%)',
+        }}
+      />
+
+      {/* Afterglow layer — the storm recovering after the strike */}
+      <div
+        ref={afterglowRef}
+        className="fixed inset-0 z-20 pointer-events-none"
+        style={{
+          opacity: 0,
+          background:
+            'radial-gradient(circle at 50% 46%, rgba(150, 195, 245, 0.5) 0%, rgba(90, 140, 200, 0.2) 45%, transparent 75%)',
+        }}
+      />
 
       {/* Logo */}
       <div className="absolute top-6 left-6 z-20" data-testid="logo-act1">
