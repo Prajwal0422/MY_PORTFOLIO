@@ -286,14 +286,16 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     );
     act.to(afterglowRef.current, { opacity: 0, duration: 0.8, ease: 'power1.inOut' }, 0.7);
 
-    // Fade out and transition to Act 2
-    gsap.to(containerRef.current, {
-      opacity: 0,
-      duration: 1.5,
-      ease: 'power2.inOut',
-      delay: 0.8,
-      onComplete: onComplete,
-    });
+    // Cinematic transition: light fills the screen, then the storm
+    // disappears into darkness and Act 2 begins.
+    act.to([introTextRef.current, hintRef.current], { opacity: 0, duration: 0.35, ease: 'power1.in' }, 0.85);
+    act.to(
+      flashRef.current,
+      { opacity: 0.5, duration: 0.4, ease: 'power2.inOut', overwrite: 'auto' },
+      0.9
+    );
+    act.to(containerRef.current, { opacity: 0, duration: 0.8, ease: 'power2.inOut' }, 1.15);
+    act.add(() => onComplete(), 1.95);
   };
 
   // Procedural lightning branches radiating from the shield.
