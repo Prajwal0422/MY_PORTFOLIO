@@ -1,12 +1,13 @@
 import React from 'react';
 import { Github, Linkedin, Mail, FileText } from 'lucide-react';
+import { socialLinks, personal } from '../data/portfolioData';
 
 const QuickLinks = () => {
   const links = [
-    { icon: Github, label: 'GitHub', url: 'https://github.com/Prajwal0422', color: 'hover:text-gray-400' },
-    { icon: Linkedin, label: 'LinkedIn', url: '#', color: 'hover:text-blue-400' },
-    { icon: Mail, label: 'Email', url: 'mailto:prajwal@example.com', color: 'hover:text-cyan-400' },
-    { icon: FileText, label: 'Resume', url: '#', color: 'hover:text-green-400' },
+    { icon: Github, label: 'GitHub', url: socialLinks.github, color: 'hover:text-gray-400' },
+    { icon: Linkedin, label: 'LinkedIn', url: socialLinks.linkedin, color: 'hover:text-blue-400' },
+    { icon: Mail, label: 'Email', url: socialLinks.email, color: 'hover:text-cyan-400' },
+    { icon: FileText, label: 'Resume', url: personal.resumeUrl, color: 'hover:text-green-400' },
   ];
 
   return (

@@ -1,16 +1,15 @@
 import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
-import { Github, Linkedin, Instagram, Mail, Twitter } from 'lucide-react';
+import { Github, Linkedin, Mail } from 'lucide-react';
+import { socialLinks } from '../data/portfolioData';
 
 const SocialLinks = ({ variant = 'horizontal', className = '' }) => {
   const containerRef = useRef(null);
 
-  const socialLinks = [
-    { icon: Github, url: 'https://github.com/Prajwal0422', label: 'GitHub', color: '#00d4ff' },
-    { icon: Linkedin, url: '#', label: 'LinkedIn', color: '#0077b5' },
-    { icon: Twitter, url: '#', label: 'Twitter', color: '#1da1f2' },
-    { icon: Instagram, url: '#', label: 'Instagram', color: '#e4405f' },
-    { icon: Mail, url: 'mailto:your-email@example.com', label: 'Email', color: '#00d4ff' },
+  const socialItems = [
+    { icon: Github, url: socialLinks.github, label: 'GitHub', color: '#00d4ff' },
+    { icon: Linkedin, url: socialLinks.linkedin, label: 'LinkedIn', color: '#0077b5' },
+    { icon: Mail, url: socialLinks.email, label: 'Email', color: '#00d4ff' },
   ];
 
   useEffect(() => {
@@ -35,7 +34,7 @@ const SocialLinks = ({ variant = 'horizontal', className = '' }) => {
       ref={containerRef}
       className={`flex ${variant === 'vertical' ? 'flex-col' : 'flex-row'} gap-4 ${className}`}
     >
-      {socialLinks.map((link) => (
+      {socialItems.map((link) => (
         <a
           key={link.label}
           href={link.url}

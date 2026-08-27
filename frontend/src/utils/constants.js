@@ -2,13 +2,15 @@
  * Application Constants
  */
 
+import { socialLinks } from '../data/portfolioData';
+
 export const APP_NAME = 'Prajwal Jain Portfolio';
 export const APP_VERSION = '2.0.0';
 
 export const SOCIAL_LINKS = {
-  github: 'https://github.com/Prajwal0422',
-  linkedin: 'https://linkedin.com/in/prajwal-jain',
-  email: 'prajwal@example.com',
+  github: socialLinks.github,
+  linkedin: socialLinks.linkedin,
+  email: socialLinks.email,
 };
 
 export const ANIMATION_DURATION = {

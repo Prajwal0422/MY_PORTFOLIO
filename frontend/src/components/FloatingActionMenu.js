@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { Menu, X, Github, Linkedin, Mail, ArrowUp } from 'lucide-react';
+import { socialLinks } from '../data/portfolioData';
 
 const FloatingActionMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,9 +9,9 @@ const FloatingActionMenu = () => {
   const itemsRef = useRef([]);
 
   const menuItems = [
-    { icon: Github, label: 'GitHub', url: 'https://github.com/Prajwal0422' },
-    { icon: Linkedin, label: 'LinkedIn', url: '#' },
-    { icon: Mail, label: 'Email', url: 'mailto:your-email@example.com' },
+    { icon: Github, label: 'GitHub', url: socialLinks.github },
+    { icon: Linkedin, label: 'LinkedIn', url: socialLinks.linkedin },
+    { icon: Mail, label: 'Email', url: socialLinks.email },
     { icon: ArrowUp, label: 'Top', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
   ];
 

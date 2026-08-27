@@ -1,13 +1,13 @@
-import { Github, Linkedin, Instagram, Mail, Heart, ArrowUp } from 'lucide-react';
+import { Github, Linkedin, Mail, Heart, ArrowUp } from 'lucide-react';
+import { socialLinks } from '../data/portfolioData';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  const socialLinks = [
-    { icon: Github, url: 'https://github.com/Prajwal0422', label: 'GitHub' },
-    { icon: Linkedin, url: '#', label: 'LinkedIn' },
-    { icon: Instagram, url: '#', label: 'Instagram' },
-    { icon: Mail, url: 'mailto:your-email@example.com', label: 'Email' },
+  const footerSocials = [
+    { icon: Github, url: socialLinks.github, label: 'GitHub' },
+    { icon: Linkedin, url: socialLinks.linkedin, label: 'LinkedIn' },
+    { icon: Mail, url: socialLinks.email, label: 'Email' },
   ];
 
   const scrollToTop = () => {
@@ -60,7 +60,7 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold text-cyan-400 mb-4">Connect</h4>
             <div className="flex gap-4">
-              {socialLinks.map((link) => (
+              {footerSocials.map((link) => (
                 <a
                   key={link.label}
                   href={link.url}

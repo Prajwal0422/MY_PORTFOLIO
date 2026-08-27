@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import axios from 'axios';
-import { Github, Linkedin, Instagram, Mail, Download } from 'lucide-react';
+import { Github, Linkedin, Mail, Phone, Download } from 'lucide-react';
 import LiveTerminal from './LiveTerminal';
 import PerformanceModeToggle from './PerformanceModeToggle';
 import EnhancedProjectCard from './EnhancedProjectCard';
@@ -28,7 +28,7 @@ import ContactForm from './ContactForm';
 import MobileMenu from './MobileMenu';
 import Footer from './Footer';
 import { VideoOptimizer, debounce } from '../utils/performance';
-import { featuredProjects, personal, navigation } from '../data/portfolioData';
+import { featuredProjects, personal, navigation, socialLinks } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -555,10 +555,10 @@ const Act3Portfolio = ({ isMobile }) => {
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { icon: Github, name: 'GitHub', url: 'https://github.com/Prajwal0422', color: 'from-gray-600 to-gray-800' },
-                    { icon: Linkedin, name: 'LinkedIn', url: '#', color: 'from-blue-600 to-blue-800' },
-                    { icon: Instagram, name: 'Instagram', url: '#', color: 'from-pink-600 to-purple-800' },
-                    { icon: Mail, name: 'Email', url: 'mailto:your-email@example.com', color: 'from-cyan-600 to-blue-800' },
+                    { icon: Github, name: 'GitHub', url: socialLinks.github, color: 'from-gray-600 to-gray-800' },
+                    { icon: Linkedin, name: 'LinkedIn', url: socialLinks.linkedin, color: 'from-blue-600 to-blue-800' },
+                    { icon: Mail, name: 'Email', url: socialLinks.email, color: 'from-cyan-600 to-blue-800' },
+                    { icon: Phone, name: 'Phone', url: socialLinks.phone, color: 'from-green-600 to-teal-800' },
                   ].map((link) => (
                     <a
                       key={link.name}
