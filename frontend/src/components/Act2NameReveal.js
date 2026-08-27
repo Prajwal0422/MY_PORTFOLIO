@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { featuredProjects } from '@/data/portfolioData';
+import { featuredProjects, personal } from '@/data/portfolioData';
 
 // Abstract visual motifs — stylized line art, never fake screenshots.
 const Motif = ({ type }) => {
@@ -92,7 +92,7 @@ const MONTAGE = [
 
 // ACT 2 — Cinematic Identity Reveal.
 //
-// Beat structure (beats 2–5 land in later commits):
+// Beat structure (name animation, transitions & sound land in later commits):
 //   1. After the storm    — Act 1's flash collapses into deeper darkness
 //   2. First tech signal  — terminal / code fragments
 //   3. Project memory     — abstract montage of real portfolio work
@@ -111,6 +111,9 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
   const term2Ref = useRef(null);
   const nodesRef = useRef(null);
   const fragmentRefs = useRef([]);
+  const nameRef = useRef(null);
+  const letterRefs = useRef([]);
+  const taglineRef = useRef(null);
 
   const completedRef = useRef(false);
   const timelineRef = useRef(null);
@@ -131,6 +134,9 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     const term2 = term2Ref.current;
     const nodes = nodesRef.current;
     const fragments = fragmentRefs.current;
+    const name = nameRef.current;
+    const letters = letterRefs.current.filter(Boolean);
+    const tagline = taglineRef.current;
 
     // Guarded, exactly-once handoff used by the timeline's final call
     const finishNow = () => {
@@ -146,7 +152,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       completedRef.current = true;
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       if (timelineRef.current) timelineRef.current.kill();
-      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments]);
+      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, ...letters]);
       gsap.to(container, {
         opacity: 0,
         duration: 1.0,
@@ -189,8 +195,6 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       0
     );
 
-    // (Beats 2–5 are appended by later commits.)
-
     // BEAT 2 — FIRST TECHNOLOGY SIGNAL (1.0–2.5s)
     // A quiet terminal trace and a small neural graph — present, then gone.
     tl.fromTo(
@@ -214,11 +218,11 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     tl.to(term, { autoAlpha: 0, duration: 0.4, ease: 'power1.in' }, 2.5);
     tl.to(nodes, { autoAlpha: 0, duration: 0.4, ease: 'power1.in' }, 2.5);
 
-    // BEAT 3 — PROJECT MEMORY MONTAGE (2.6–5.8s)
+    // BEAT 3 — PROJECT MEMORY MONTAGE (2.4–5.1s)
     // Rapid, elegant fragments: blur-to-sharp in, soft collapse out.
     fragments.forEach((frag, i) => {
       if (!frag) return;
-      const pos = 2.6 + i * 0.45;
+      const pos = 2.4 + i * 0.4;
       tl.fromTo(
         frag,
         { autoAlpha: 0, scale: 1.06, filter: 'blur(10px)' },
@@ -232,9 +236,34 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       );
     });
 
-    // Interim handoff: hold the darkness briefly, then fade to Act 3.
-    tl.to(container, { opacity: 0, duration: 1.0, ease: 'power2.inOut' }, 6.2);
-    tl.call(finishNow, null, 7.3);
+    // BEAT 4 — IDENTITY REVEAL (5.4–8.4s)
+    // The montage clears into quiet darkness, then the name emerges.
+    letters.forEach((letter, i) => {
+      if (!letter) return;
+      tl.fromTo(
+        letter,
+        { autoAlpha: 0, letterSpacing: '0.55em', filter: 'blur(9px)', y: 8 },
+        {
+          autoAlpha: 1,
+          letterSpacing: '0.22em',
+          filter: 'blur(0px)',
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out',
+        },
+        5.4 + i * 0.05
+      );
+    });
+    tl.fromTo(
+      tagline,
+      { autoAlpha: 0, y: 10 },
+      { autoAlpha: 1, y: 0, duration: 0.7, ease: 'power2.out' },
+      6.6
+    );
+
+    // Handoff: let the name breathe, then fade into Act 3.
+    tl.to(container, { opacity: 0, duration: 1.0, ease: 'power2.inOut' }, 8.8);
+    tl.call(finishNow, null, 9.9);
 
     // Hard safety net — the user must always reach Act 3
     fallbackRef.current = setTimeout(finishAct, 16000);
@@ -242,7 +271,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     return () => {
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       tl.kill();
-      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments]);
+      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, ...letters]);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -374,6 +403,42 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* BEAT 4 — identity reveal: the name is the main moment */}
+      <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+        <div className="flex flex-col items-center px-6">
+          <h1
+            ref={nameRef}
+            className="font-heading text-white text-center leading-tight select-none"
+            style={{
+              fontSize: 'clamp(2rem, 7vw, 5rem)',
+              textShadow: '0 0 42px rgba(120, 180, 255, 0.25)',
+            }}
+          >
+            {personal.displayName.split('').map((ch, i) => (
+              <span
+                key={i}
+                ref={(el) => (letterRefs.current[i] = el)}
+                className="inline-block will-change-transform"
+                style={{ opacity: 0, whiteSpace: ch === ' ' ? 'pre' : undefined }}
+              >
+                {ch === ' ' ? '\u00A0' : ch}
+              </span>
+            ))}
+          </h1>
+          <p
+            ref={taglineRef}
+            className="font-body mt-5 text-center tracking-[0.35em] uppercase select-none"
+            style={{
+              opacity: 0,
+              fontSize: 'clamp(0.6rem, 1.4vw, 0.8rem)',
+              color: 'rgba(170, 205, 240, 0.75)',
+            }}
+          >
+            Artificial Intelligence • Data • Intelligent Systems
+          </p>
+        </div>
       </div>
 
       {/* Skip control — refined in a later commit */}
