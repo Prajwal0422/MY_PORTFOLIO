@@ -7,6 +7,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const stormMotionRef = useRef(null);
   const shieldOuterRef = useRef(null);
   const introTextRef = useRef(null);
+  const hintRef = useRef(null);
   const glowRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
 
@@ -15,29 +16,55 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     const stormMotion = stormMotionRef.current;
     const shieldOuter = shieldOuterRef.current;
     const introText = introTextRef.current;
+    const hint = hintRef.current;
     const glow = glowRef.current;
 
     // Entrance: the storm settles in, then the shield emerges from it
     const tl = gsap.timeline();
 
+    // 0.0s → the storm fades in from black
     tl.fromTo(
       video,
       { opacity: 0 },
-      { opacity: 1, duration: 2.5, ease: 'power2.inOut' }
+      { opacity: 1, duration: 1.2, ease: 'power2.inOut' }
     );
 
-    tl.fromTo(
+    // 0.4s → the shield begins emerging from the storm
+    tl.set(shieldOuter, { opacity: 0, scale: 0.88, y: 28, filter: 'blur(10px)' }, 0.4);
+    tl.to(
       shieldOuter,
-      { opacity: 0, scale: 0.5 },
-      { opacity: 1, scale: 1, duration: 2, ease: 'back.out(1.7)' },
-      '-=1.5'
+      { opacity: 0.5, duration: 0.4, ease: 'power1.in' },
+      0.4
     );
 
+    // 0.8s → shield reaches ~50% opacity, keeps emerging
+    tl.to(
+      shieldOuter,
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.7,
+        ease: 'power2.out',
+      },
+      0.8
+    );
+
+    // 1.1s → the primary line fades upward after the shield begins appearing
     tl.fromTo(
       introText,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 2, ease: 'power2.out' },
-      '-=1'
+      { opacity: 0, y: 24 },
+      { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' },
+      1.1
+    );
+
+    // 1.9s → the instruction appears last, quiet and understated
+    tl.fromTo(
+      hint,
+      { opacity: 0 },
+      { opacity: 1, duration: 1.2, ease: 'power1.inOut' },
+      1.9
     );
 
     // Almost imperceptible camera drift through the clouds
@@ -66,7 +93,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
 
     return () => {
       tl.kill();
-      gsap.killTweensOf([video, stormMotion, shieldOuter, introText, glow]);
+      gsap.killTweensOf([video, stormMotion, shieldOuter, introText, hint, glow]);
       if (video) video.pause();
     };
   }, []);
@@ -183,7 +210,11 @@ const Act1Storm = ({ onComplete, isMobile }) => {
             <img
               src="/assets/shield.png"
               alt="Shield"
-              className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain"
+              className="w-full h-auto object-contain"
+              style={{
+                // Responsive tiers: mobile stays tappable, desktop stays cinematic
+                width: isMobile ? 'min(65vw, 340px)' : 'clamp(220px, 28vw, 440px)',
+              }}
             />
           </div>
         </div>
@@ -198,14 +229,15 @@ const Act1Storm = ({ onComplete, isMobile }) => {
             data-testid="intro-quote"
             style={{
               letterSpacing: '0.15em',
-              color: '#fff',
-              textShadow: '0 0 20px rgba(0, 212, 255, 0.6)',
+              color: '#f4f7fb',
+              textShadow: '0 2px 24px rgba(6, 12, 24, 0.8)',
             }}
           >
             Before the storm... there is silence
           </h1>
           <p
-            className="text-sm md:text-base text-gray-400 font-body tracking-wide animate-pulse"
+            ref={hintRef}
+            className="text-xs md:text-sm uppercase tracking-[0.35em] text-gray-400 font-body"
             data-testid="intro-hint"
           >
             Click the shield
