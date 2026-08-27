@@ -92,7 +92,7 @@ const MONTAGE = [
 
 // ACT 2 — Cinematic Identity Reveal.
 //
-// Beat structure (sound design lands in a later commit):
+// Beat structure:
 //   1. After the storm    — Act 1's flash collapses into deeper darkness
 //   2. First tech signal  — terminal / code fragments
 //   3. Project memory     — abstract montage of real portfolio work
@@ -101,6 +101,181 @@ const MONTAGE = [
 //
 // The sequence always completes through one guarded transition:
 // timeline end, skip, or the hard fallback timer.
+// Compose an ORIGINAL procedural score with WebAudio — no audio files,
+// nothing copyrighted. Everything is wrapped defensively: if the context
+// can't start (no user gesture, blocked autoplay), Act 2 plays silently.
+// Act 1's shield click is the gesture that typically unlocks audio here.
+const createAct2Score = () => {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return null;
+
+  let ctx;
+  try {
+    ctx = new AudioCtx();
+  } catch (e) {
+    return null;
+  }
+
+  const master = ctx.createGain();
+  master.gain.value = 0.16; // restrained — the visuals lead
+  master.connect(ctx.destination);
+
+  const nodes = [];
+  const track = (node) => {
+    nodes.push(node);
+    return node;
+  };
+
+  const dispose = () => {
+    try {
+      nodes.forEach((n) => {
+        try {
+          n.stop();
+        } catch (e) {
+          /* already stopped */
+        }
+        try {
+          n.disconnect();
+        } catch (e) {
+          /* already disconnected */
+        }
+      });
+      master.disconnect();
+      if (ctx.state !== 'closed') ctx.close();
+    } catch (e) {
+      /* best-effort teardown */
+    }
+  };
+
+  // Skip path: dissolve the score quickly instead of cutting it off
+  const fadeOut = () => {
+    try {
+      const now = ctx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(0, now + 0.6);
+      setTimeout(dispose, 700);
+    } catch (e) {
+      /* best-effort fade */
+    }
+  };
+
+  const start = () =>
+    ctx.resume().then(() => {
+      const t0 = ctx.currentTime + 0.05;
+
+      // Ambience: two detuned low sines, very quiet
+      [55, 82.5].forEach((freq, i) => {
+        const osc = track(ctx.createOscillator());
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const g = track(ctx.createGain());
+        g.gain.setValueAtTime(0, t0);
+        g.gain.linearRampToValueAtTime(i === 0 ? 0.5 : 0.3, t0 + 1.6);
+        osc.connect(g).connect(master);
+        osc.start(t0);
+        osc.stop(t0 + 11);
+      });
+
+      // Air: looped filtered noise, low-passed into near-silence
+      const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+      const data = noiseBuf.getChannelData(0);
+      for (let i = 0; i < data.length; i += 1) data[i] = Math.random() * 2 - 1;
+      const noise = track(ctx.createBufferSource());
+      noise.buffer = noiseBuf;
+      noise.loop = true;
+      const airFilter = track(ctx.createBiquadFilter());
+      airFilter.type = 'lowpass';
+      airFilter.frequency.value = 260;
+      const airGain = track(ctx.createGain());
+      airGain.gain.setValueAtTime(0, t0);
+      airGain.gain.linearRampToValueAtTime(0.06, t0 + 2);
+      noise.connect(airFilter).connect(airGain).connect(master);
+      noise.start(t0);
+      noise.stop(t0 + 11);
+
+      // Tech signals: soft sine blips as the terminal lines appear
+      [1.0, 1.5].forEach((when) => {
+        const osc = track(ctx.createOscillator());
+        osc.type = 'sine';
+        osc.frequency.value = when < 1.2 ? 880 : 1174;
+        const g = track(ctx.createGain());
+        const t = t0 + when;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.07, t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+        osc.connect(g).connect(master);
+        osc.start(t);
+        osc.stop(t + 0.4);
+      });
+
+      // Montage: a quiet tick for each fragment
+      for (let i = 0; i < 7; i += 1) {
+        const t = t0 + 2.4 + i * 0.4;
+        const osc = track(ctx.createOscillator());
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520 + i * 70, t);
+        osc.frequency.exponentialRampToValueAtTime(300 + i * 45, t + 0.09);
+        const g = track(ctx.createGain());
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.05, t + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+        osc.connect(g).connect(master);
+        osc.start(t);
+        osc.stop(t + 0.15);
+      }
+
+      // Musical rise into the name reveal: band-passed noise sweep
+      const rise = track(ctx.createBufferSource());
+      rise.buffer = noiseBuf;
+      rise.loop = true;
+      const riseFilter = track(ctx.createBiquadFilter());
+      riseFilter.type = 'bandpass';
+      riseFilter.Q.value = 2.5;
+      riseFilter.frequency.setValueAtTime(120, t0 + 5.2);
+      riseFilter.frequency.exponentialRampToValueAtTime(1600, t0 + 6.7);
+      const riseGain = track(ctx.createGain());
+      riseGain.gain.setValueAtTime(0, t0 + 5.2);
+      riseGain.gain.linearRampToValueAtTime(0.09, t0 + 6.7);
+      riseGain.gain.linearRampToValueAtTime(0, t0 + 7.4);
+      rise.connect(riseFilter).connect(riseGain).connect(master);
+      rise.start(t0 + 5.2);
+      rise.stop(t0 + 7.5);
+
+      // Impact accent on name completion: sine drop + soft noise thump
+      const drop = track(ctx.createOscillator());
+      drop.type = 'sine';
+      drop.frequency.setValueAtTime(150, t0 + 7.3);
+      drop.frequency.exponentialRampToValueAtTime(48, t0 + 7.95);
+      const dropGain = track(ctx.createGain());
+      dropGain.gain.setValueAtTime(0, t0 + 7.3);
+      dropGain.gain.linearRampToValueAtTime(0.3, t0 + 7.34);
+      dropGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 8.2);
+      drop.connect(dropGain).connect(master);
+      drop.start(t0 + 7.3);
+      drop.stop(t0 + 8.3);
+
+      const thump = track(ctx.createBufferSource());
+      thump.buffer = noiseBuf;
+      const thumpFilter = track(ctx.createBiquadFilter());
+      thumpFilter.type = 'lowpass';
+      thumpFilter.frequency.value = 220;
+      const thumpGain = track(ctx.createGain());
+      thumpGain.gain.setValueAtTime(0, t0 + 7.3);
+      thumpGain.gain.linearRampToValueAtTime(0.1, t0 + 7.33);
+      thumpGain.gain.exponentialRampToValueAtTime(0.0001, t0 + 7.8);
+      thump.connect(thumpFilter).connect(thumpGain).connect(master);
+      thump.start(t0 + 7.3);
+      thump.stop(t0 + 7.9);
+
+      // Handoff: everything dissolves softly toward Act 3
+      master.gain.setValueAtTime(0.16, t0 + 8.4);
+      master.gain.linearRampToValueAtTime(0, t0 + 10.6);
+    });
+
+  return { start, dispose, fadeOut };
+};
+
 const Act2NameReveal = ({ onComplete, isMobile }) => {
   const containerRef = useRef(null);
   const flashRef = useRef(null);
@@ -216,6 +391,16 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     const tagline = taglineRef.current;
     const sweep = sweepRef.current;
 
+    // Original score — continues from Act 1's user gesture when allowed,
+    // and Act 2 still plays perfectly when audio stays blocked.
+    let score = null;
+    try {
+      score = createAct2Score();
+      if (score) score.start().catch(() => {});
+    } catch (e) {
+      score = null;
+    }
+
     // Guarded, exactly-once handoff used by the timeline's final call
     const finishNow = () => {
       if (completedRef.current) return;
@@ -230,6 +415,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       completedRef.current = true;
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       if (timelineRef.current) timelineRef.current.kill();
+      if (score) score.fadeOut();
       gsap.killTweensOf([container, flash, haze, glow, term, nodes, montage, ...fragments, name, tagline, sweep, ...letters]);
       gsap.to(container, {
         opacity: 0,
@@ -393,6 +579,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       tl.kill();
       gsap.killTweensOf([container, flash, haze, glow, term, nodes, montage, ...fragments, name, tagline, sweep, ...letters]);
+      if (score) score.dispose();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
