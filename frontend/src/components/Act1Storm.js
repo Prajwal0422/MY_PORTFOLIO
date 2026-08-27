@@ -194,9 +194,12 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     activatedRef.current = true;
 
     // Activation: energy buildup → CRACK → controlled flash.
-    // The impact physics, shockwave, thunder and cinematic transition are
-    // layered onto this same timeline in later refinements.
+    // The cinematic transition is refined in later commits.
     const act = gsap.timeline();
+
+    // The idle breathing stops the moment the shield is activated —
+    // the impact physics owns the shield transform from here on.
+    gsap.killTweensOf([shieldRef.current, shieldGlowRef.current]);
 
     // 0.0–0.35s — energy builds around the shield
     act.to(
@@ -212,6 +215,22 @@ const Act1Storm = ({ onComplete, isMobile }) => {
 
     // 0.35s — IMPACT: localized electric burst + lightning branches
     playThunder();
+
+    // Shield impact physics: massive compression, recoil, brief vibration
+    act.to(shieldRef.current, { scale: 0.97, rotation: -1, duration: 0.08, ease: 'power3.in' }, 0.35);
+    act.to(shieldRef.current, { scale: 1.015, rotation: 0.4, duration: 0.12, ease: 'power2.out' }, 0.43);
+    act.to(shieldRef.current, { scale: 1, rotation: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' }, 0.55);
+    act.to(shieldRef.current, { x: 1.5, duration: 0.03, yoyo: true, repeat: 5, ease: 'none' }, 0.36);
+    act.set(shieldRef.current, { x: 0 }, 0.58);
+
+    // Short cinematic screen shake — low amplitude, fast decay, transforms only
+    act.to(containerRef.current, { x: 5, y: 3, duration: 0.045, ease: 'none' }, 0.35);
+    act.to(containerRef.current, { x: -4, y: -2, duration: 0.05, ease: 'none' }, 0.395);
+    act.to(containerRef.current, { x: 3, y: 2, duration: 0.055, ease: 'none' }, 0.445);
+    act.to(containerRef.current, { x: -2, y: -1, duration: 0.06, ease: 'none' }, 0.5);
+    act.to(containerRef.current, { x: 1, y: 0.5, duration: 0.07, ease: 'none' }, 0.56);
+    act.to(containerRef.current, { x: 0, y: 0, duration: 0.1, ease: 'power1.out' }, 0.63);
+
     act.fromTo(
       energyRef.current,
       { opacity: 0.85 },
