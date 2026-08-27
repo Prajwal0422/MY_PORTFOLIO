@@ -92,7 +92,7 @@ const MONTAGE = [
 
 // ACT 2 — Cinematic Identity Reveal.
 //
-// Beat structure (name animation, transitions & sound land in later commits):
+// Beat structure (transitions & sound land in later commits):
 //   1. After the storm    — Act 1's flash collapses into deeper darkness
 //   2. First tech signal  — terminal / code fragments
 //   3. Project memory     — abstract montage of real portfolio work
@@ -114,6 +114,8 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
   const nameRef = useRef(null);
   const letterRefs = useRef([]);
   const taglineRef = useRef(null);
+  const sweepRef = useRef(null);
+  const particleCanvasRef = useRef(null);
 
   const completedRef = useRef(false);
   const timelineRef = useRef(null);
@@ -123,6 +125,79 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
   // Keep the latest completion callback without re-running the effect
   const completeRef = useRef(onComplete);
   completeRef.current = onComplete;
+
+  // Particles shift from ambient drift to converging on the name, then settle.
+  const convergeRef = useRef(false);
+  const settleRef = useRef(false);
+
+  useEffect(() => {
+    const canvas = particleCanvasRef.current;
+    if (!canvas) return undefined;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return undefined;
+
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const COUNT = coarse ? 30 : 60; // restrained — never thousands of nodes
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+
+    const resize = () => {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const particles = Array.from({ length: COUNT }, () => ({
+      x: Math.random() * w,
+      y: h * 0.25 + Math.random() * h * 0.75,
+      r: 0.6 + Math.random() * 1.3,
+      vx: (Math.random() - 0.5) * 0.15,
+      vy: -0.1 - Math.random() * 0.25,
+      a: 0.15 + Math.random() * 0.4,
+    }));
+
+    let raf = 0;
+    const tick = () => {
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2;
+      const cy = h * 0.46;
+      for (const p of particles) {
+        if (convergeRef.current && !settleRef.current) {
+          // Drawn toward the name
+          p.vx += (cx - p.x) * 0.0009;
+          p.vy += (cy - p.y) * 0.0009;
+          p.vx *= 0.985;
+          p.vy *= 0.985;
+        } else if (settleRef.current) {
+          // Released into a slow, quiet drift
+          p.vx *= 0.96;
+          p.vy = p.vy * 0.96 + 0.02;
+        }
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(170, 205, 250, ${p.a})`;
+        ctx.fill();
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      particles.length = 0;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -137,6 +212,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     const name = nameRef.current;
     const letters = letterRefs.current.filter(Boolean);
     const tagline = taglineRef.current;
+    const sweep = sweepRef.current;
 
     // Guarded, exactly-once handoff used by the timeline's final call
     const finishNow = () => {
@@ -152,7 +228,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       completedRef.current = true;
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       if (timelineRef.current) timelineRef.current.kill();
-      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, ...letters]);
+      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, sweep, ...letters]);
       gsap.to(container, {
         opacity: 0,
         duration: 1.0,
@@ -238,6 +314,10 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
 
     // BEAT 4 — IDENTITY REVEAL (5.4–8.4s)
     // The montage clears into quiet darkness, then the name emerges.
+    // Particles stop drifting and are drawn toward the forming name.
+    tl.call(() => {
+      convergeRef.current = true;
+    }, null, 5.2);
     letters.forEach((letter, i) => {
       if (!letter) return;
       tl.fromTo(
@@ -254,6 +334,17 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
         5.4 + i * 0.05
       );
     });
+    // One metallic light sweep across the finished name — subtle, once, done.
+    tl.fromTo(
+      sweep,
+      { xPercent: -50, autoAlpha: 0 },
+      { xPercent: 380, autoAlpha: 1, duration: 0.95, ease: 'power2.inOut' },
+      6.6
+    );
+    tl.to(sweep, { autoAlpha: 0, duration: 0.15, ease: 'power1.out' }, 7.5);
+    tl.call(() => {
+      settleRef.current = true;
+    }, null, 7.6);
     tl.fromTo(
       tagline,
       { autoAlpha: 0, y: 10 },
@@ -271,7 +362,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     return () => {
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       tl.kill();
-      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, ...letters]);
+      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, sweep, ...letters]);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -319,6 +410,13 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
           background:
             'radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%)',
         }}
+      />
+
+      {/* Controlled particle field — canvas, never DOM nodes */}
+      <canvas
+        ref={particleCanvasRef}
+        className="absolute inset-0 pointer-events-none"
+        aria-hidden="true"
       />
 
       {/* Act 1 flash collapse — bright at mount, gone within a second */}
@@ -408,25 +506,40 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       {/* BEAT 4 — identity reveal: the name is the main moment */}
       <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
         <div className="flex flex-col items-center px-6">
-          <h1
-            ref={nameRef}
-            className="font-heading text-white text-center leading-tight select-none"
-            style={{
-              fontSize: 'clamp(2rem, 7vw, 5rem)',
-              textShadow: '0 0 42px rgba(120, 180, 255, 0.25)',
-            }}
-          >
-            {personal.displayName.split('').map((ch, i) => (
-              <span
-                key={i}
-                ref={(el) => (letterRefs.current[i] = el)}
-                className="inline-block will-change-transform"
-                style={{ opacity: 0, whiteSpace: ch === ' ' ? 'pre' : undefined }}
-              >
-                {ch === ' ' ? '\u00A0' : ch}
-              </span>
-            ))}
-          </h1>
+          <div className="relative overflow-hidden">
+            <h1
+              ref={nameRef}
+              className="font-heading text-white text-center leading-tight select-none"
+              style={{
+                fontSize: 'clamp(2rem, 7vw, 5rem)',
+                textShadow: '0 0 42px rgba(120, 180, 255, 0.25)',
+              }}
+            >
+              {personal.displayName.split('').map((ch, i) => (
+                <span
+                  key={i}
+                  ref={(el) => (letterRefs.current[i] = el)}
+                  className="inline-block will-change-transform"
+                  style={{ opacity: 0, whiteSpace: ch === ' ' ? 'pre' : undefined }}
+                >
+                  {ch === ' ' ? '\u00A0' : ch}
+                </span>
+              ))}
+            </h1>
+            {/* Metallic sweep — clipped to the title, plays exactly once */}
+            <div
+              ref={sweepRef}
+              className="absolute top-0 bottom-0 pointer-events-none"
+              style={{
+                left: '-20%',
+                width: '40%',
+                background:
+                  'linear-gradient(105deg, transparent 0%, rgba(220, 235, 255, 0.14) 42%, rgba(255, 255, 255, 0.35) 50%, rgba(220, 235, 255, 0.14) 58%, transparent 100%)',
+                transform: 'skewX(-18deg)',
+                opacity: 0,
+              }}
+            />
+          </div>
           <p
             ref={taglineRef}
             className="font-body mt-5 text-center tracking-[0.35em] uppercase select-none"
