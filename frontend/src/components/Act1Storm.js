@@ -19,6 +19,8 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const [isReady, setIsReady] = useState(false);
   // Guard against re-entry once the activation sequence has begun
   const activatedRef = useRef(false);
+  // Thunder is created lazily on the user gesture and never autoplays
+  const thunderRef = useRef(null);
   // Hover only makes sense with a real pointer (never on touch devices)
   const hasFinePointer =
     typeof window !== 'undefined' &&
@@ -159,8 +161,33 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         glow,
       ]);
       if (video) video.pause();
+      if (thunderRef.current) {
+        thunderRef.current.pause();
+        thunderRef.current = null;
+      }
     };
   }, []);
+
+  // Thunder plays exactly at the visual impact. It is triggered from the
+  // click gesture, capped at a sensible volume, and any playback failure
+  // (blocked audio, missing file) is ignored silently — the visuals carry on.
+  const playThunder = () => {
+    try {
+      if (!thunderRef.current) {
+        thunderRef.current = new Audio('/assets/thunder.mp3');
+        thunderRef.current.preload = 'auto';
+      }
+      const audio = thunderRef.current;
+      audio.currentTime = 0;
+      audio.volume = 0.65;
+      const result = audio.play();
+      if (result && typeof result.catch === 'function') {
+        result.catch(() => {});
+      }
+    } catch {
+      // Never let audio problems break the visual sequence
+    }
+  };
 
   const handleClick = () => {
     if (!isReady || activatedRef.current) return;
@@ -184,6 +211,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     );
 
     // 0.35s — IMPACT: localized electric burst + lightning branches
+    playThunder();
     act.fromTo(
       energyRef.current,
       { opacity: 0.85 },
