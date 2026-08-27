@@ -90,6 +90,15 @@ const MONTAGE = [
   { label: 'CODE & GIT', tech: ['Python', 'Git', 'GitHub'], motif: 'git' },
 ];
 
+// The name grouped into words so narrow screens wrap to two lines
+// instead of cropping — letter indices stay stable for the stagger.
+const NAME_WORDS = (() => {
+  let i = 0;
+  return personal.displayName
+    .split(' ')
+    .map((word) => word.split('').map((ch) => ({ ch, i: i++ })));
+})();
+
 // ACT 2 — Cinematic Identity Reveal.
 //
 // Beat structure:
@@ -336,6 +345,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     }));
 
     let raf = 0;
+    let running = true;
     const tick = () => {
       ctx.clearRect(0, 0, w, h);
       const cx = w / 2;
@@ -365,10 +375,23 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       }
       raf = requestAnimationFrame(tick);
     };
+
+    // No rAF work while the tab is hidden — resume cleanly when visible
+    const onVisibility = () => {
+      if (document.hidden) {
+        running = false;
+        cancelAnimationFrame(raf);
+      } else if (!running) {
+        running = true;
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
     raf = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(raf);
+      document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('resize', resize);
       particles.length = 0;
     };
@@ -708,7 +731,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
         ref={montageRef}
         className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
       >
-        {MONTAGE.map((m, i) => (
+        {MONTAGE.slice(0, isMobile ? 4 : MONTAGE.length).map((m, i) => (
           <div
             key={m.label}
             ref={(el) => (fragmentRefs.current[i] = el)}
@@ -752,14 +775,19 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
                 textShadow: '0 0 42px rgba(120, 180, 255, 0.25)',
               }}
             >
-              {personal.displayName.split('').map((ch, i) => (
-                <span
-                  key={i}
-                  ref={(el) => (letterRefs.current[i] = el)}
-                  className="inline-block will-change-transform"
-                  style={{ opacity: 0, whiteSpace: ch === ' ' ? 'pre' : undefined }}
-                >
-                  {ch === ' ' ? '\u00A0' : ch}
+              {NAME_WORDS.map((word, wi) => (
+                <span key={wi} className="inline-block whitespace-nowrap">
+                  {word.map(({ ch, i }) => (
+                    <span
+                      key={i}
+                      ref={(el) => (letterRefs.current[i] = el)}
+                      className="inline-block will-change-transform"
+                      style={{ opacity: 0 }}
+                    >
+                      {ch}
+                    </span>
+                  ))}
+                  {wi < NAME_WORDS.length - 1 ? ' ' : null}
                 </span>
               ))}
             </h1>
@@ -797,8 +825,9 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
         onClick={() => finishActRef.current()}
         aria-label="Skip introduction"
         data-testid="act2-skip-button"
-        className="absolute bottom-6 right-6 z-30 px-4 py-2 md:px-5 md:py-2 rounded-full text-xs md:text-sm font-medium tracking-[0.18em] uppercase text-gray-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        className="absolute right-6 z-30 px-4 py-2 md:px-5 md:py-2 rounded-full text-xs md:text-sm font-medium tracking-[0.18em] uppercase text-gray-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         style={{
+          bottom: 'calc(1.5rem + env(safe-area-inset-bottom))',
           background: 'rgba(0, 10, 30, 0.6)',
           backdropFilter: 'blur(10px)',
           border: '1px solid rgba(0, 212, 255, 0.3)',
