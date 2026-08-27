@@ -92,7 +92,7 @@ const MONTAGE = [
 
 // ACT 2 — Cinematic Identity Reveal.
 //
-// Beat structure (transitions & sound land in later commits):
+// Beat structure (sound design lands in a later commit):
 //   1. After the storm    — Act 1's flash collapses into deeper darkness
 //   2. First tech signal  — terminal / code fragments
 //   3. Project memory     — abstract montage of real portfolio work
@@ -111,6 +111,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
   const term2Ref = useRef(null);
   const nodesRef = useRef(null);
   const fragmentRefs = useRef([]);
+  const montageRef = useRef(null);
   const nameRef = useRef(null);
   const letterRefs = useRef([]);
   const taglineRef = useRef(null);
@@ -209,6 +210,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     const term2 = term2Ref.current;
     const nodes = nodesRef.current;
     const fragments = fragmentRefs.current;
+    const montage = montageRef.current;
     const name = nameRef.current;
     const letters = letterRefs.current.filter(Boolean);
     const tagline = taglineRef.current;
@@ -228,7 +230,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       completedRef.current = true;
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       if (timelineRef.current) timelineRef.current.kill();
-      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, sweep, ...letters]);
+      gsap.killTweensOf([container, flash, haze, glow, term, nodes, montage, ...fragments, name, tagline, sweep, ...letters]);
       gsap.to(container, {
         opacity: 0,
         duration: 1.0,
@@ -295,19 +297,47 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     tl.to(nodes, { autoAlpha: 0, duration: 0.4, ease: 'power1.in' }, 2.5);
 
     // BEAT 3 — PROJECT MEMORY MONTAGE (2.4–5.1s)
-    // Rapid, elegant fragments: blur-to-sharp in, soft collapse out.
+    // Rapid, elegant fragments: masked wipes with blur-to-sharp focus,
+    // alternating direction for rhythm, plus a slow camera drift for depth.
+    tl.fromTo(
+      montage,
+      { scale: 1.035 },
+      { scale: 1, duration: 3.2, ease: 'power2.out' },
+      2.3
+    );
     fragments.forEach((frag, i) => {
       if (!frag) return;
       const pos = 2.4 + i * 0.4;
+      const leftToRight = i % 2 === 0;
       tl.fromTo(
         frag,
-        { autoAlpha: 0, scale: 1.06, filter: 'blur(10px)' },
-        { autoAlpha: 1, scale: 1, filter: 'blur(0px)', duration: 0.28, ease: 'power3.out' },
+        {
+          autoAlpha: 0,
+          scale: leftToRight ? 1.05 : 1.09,
+          xPercent: leftToRight ? -3 : 3,
+          filter: 'blur(9px)',
+          clipPath: leftToRight ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)',
+        },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          xPercent: 0,
+          filter: 'blur(0px)',
+          clipPath: 'inset(0 0% 0 0)',
+          duration: 0.3,
+          ease: 'power3.out',
+        },
         pos
       );
       tl.to(
         frag,
-        { autoAlpha: 0, scale: 0.98, duration: 0.18, ease: 'power1.in' },
+        {
+          autoAlpha: 0,
+          scale: 0.985,
+          filter: 'blur(4px)',
+          duration: 0.18,
+          ease: 'power1.in',
+        },
         pos + 0.3
       );
     });
@@ -362,7 +392,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
     return () => {
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
       tl.kill();
-      gsap.killTweensOf([container, flash, haze, glow, term, nodes, ...fragments, name, tagline, sweep, ...letters]);
+      gsap.killTweensOf([container, flash, haze, glow, term, nodes, montage, ...fragments, name, tagline, sweep, ...letters]);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -470,7 +500,10 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       </div>
 
       {/* BEAT 3 — project memory montage: abstract fragments, real work */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+      <div
+        ref={montageRef}
+        className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
+      >
         {MONTAGE.map((m, i) => (
           <div
             key={m.label}
