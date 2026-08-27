@@ -22,6 +22,8 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const activatedRef = useRef(false);
   // Thunder is created lazily on the user gesture and never autoplays
   const thunderRef = useRef(null);
+  // The activation timeline is tracked so it can be killed on unmount
+  const actTimelineRef = useRef(null);
   // Hover only makes sense with a real pointer (never on touch devices)
   const hasFinePointer =
     typeof window !== 'undefined' &&
@@ -47,6 +49,12 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     const hint = hintRef.current;
     const sweep = sweepRef.current;
     const glow = glowRef.current;
+    const container = containerRef.current;
+    const flash = flashRef.current;
+    const afterglow = afterglowRef.current;
+    const shockwave = shockwaveRef.current;
+    const energy = energyRef.current;
+    const boltGroup = boltGroupRef.current;
 
     // Entrance: the storm settles in, then the shield emerges from it
     const tl = gsap.timeline();
@@ -169,6 +177,11 @@ const Act1Storm = ({ onComplete, isMobile }) => {
 
     return () => {
       tl.kill();
+      // The activation sequence may be mid-flight when Act 1 unmounts
+      if (actTimelineRef.current) {
+        actTimelineRef.current.kill();
+        actTimelineRef.current = null;
+      }
       gsap.killTweensOf([
         video,
         stormMotion,
@@ -179,6 +192,12 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         introText,
         hint,
         glow,
+        container,
+        flash,
+        afterglow,
+        shockwave,
+        energy,
+        boltGroup,
       ]);
       if (video) video.pause();
       if (thunderRef.current) {
@@ -216,6 +235,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     // Activation: energy buildup → CRACK → controlled flash.
     // The cinematic transition is refined in later commits.
     const act = gsap.timeline();
+    actTimelineRef.current = act;
 
     // The idle breathing stops the moment the shield is activated —
     // the impact physics owns the shield transform from here on.
@@ -412,6 +432,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           loop
           muted
           playsInline
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
           data-testid="storm-background-video"
         >
@@ -501,6 +522,8 @@ const Act1Storm = ({ onComplete, isMobile }) => {
               ref={shieldRef}
               src="/assets/shield.png"
               alt="Shield"
+              fetchPriority="high"
+              decoding="async"
               className="relative w-full h-auto object-contain"
               style={{
                 // Responsive tiers: mobile stays tappable, desktop stays cinematic
@@ -628,6 +651,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         <img
           src="/assets/logo.png"
           alt="Logo"
+          decoding="async"
           className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80"
         />
       </div>
