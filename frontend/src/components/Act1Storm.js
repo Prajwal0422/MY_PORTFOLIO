@@ -10,8 +10,16 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const shieldGlowRef = useRef(null);
   const introTextRef = useRef(null);
   const hintRef = useRef(null);
+  const sweepRef = useRef(null);
   const glowRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
+  // Guard against re-entry once the activation sequence has begun
+  const activatedRef = useRef(false);
+  // Hover only makes sense with a real pointer (never on touch devices)
+  const hasFinePointer =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(pointer: fine)').matches;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -21,6 +29,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     const shieldGlow = shieldGlowRef.current;
     const introText = introTextRef.current;
     const hint = hintRef.current;
+    const sweep = sweepRef.current;
     const glow = glowRef.current;
 
     // Entrance: the storm settles in, then the shield emerges from it
@@ -140,6 +149,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         shieldOuter,
         shield,
         shieldGlow,
+        sweep,
         introText,
         hint,
         glow,
@@ -149,7 +159,8 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   }, []);
 
   const handleClick = () => {
-    if (!isReady) return;
+    if (!isReady || activatedRef.current) return;
+    activatedRef.current = true;
     // Lightning flash effect
     const flash = document.createElement('div');
     flash.style.cssText = `
@@ -184,6 +195,35 @@ const Act1Storm = ({ onComplete, isMobile }) => {
       e.preventDefault();
       handleClick();
     }
+  };
+
+  // Elegant hover: the shield leans in slightly, its glow lifts, and a
+  // single light sweep crosses it. Heavy — nothing jumps.
+  const handleMouseEnter = () => {
+    if (!hasFinePointer || activatedRef.current) return;
+    gsap.to(shieldRef.current, { scale: 1.025, duration: 0.7, ease: 'power2.out' });
+    gsap.to(shieldGlowRef.current, { opacity: 0.9, duration: 0.6, ease: 'power1.out' });
+
+    if (sweepRef.current) {
+      gsap.killTweensOf(sweepRef.current);
+      gsap.fromTo(
+        sweepRef.current,
+        { opacity: 0, xPercent: -130 },
+        {
+          opacity: 0.5,
+          xPercent: 130,
+          duration: 1.1,
+          ease: 'power2.inOut',
+          onComplete: () => gsap.set(sweepRef.current, { opacity: 0 }),
+        }
+      );
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!hasFinePointer || activatedRef.current) return;
+    gsap.to(shieldRef.current, { scale: 1, duration: 0.9, ease: 'power2.inOut' });
+    gsap.to(shieldGlowRef.current, { opacity: 0.6, duration: 0.8, ease: 'power1.inOut' });
   };
 
   return (
@@ -252,6 +292,8 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           aria-label="Click the shield to continue"
           onClick={handleClick}
           onKeyDown={handleKeyDown}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           className="absolute top-1/2 left-1/2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 rounded-full"
           style={{ transform: 'translate(-50%, -50%)' }}
           data-testid="shield-element"
@@ -279,6 +321,20 @@ const Act1Storm = ({ onComplete, isMobile }) => {
                 filter: 'drop-shadow(0 0 18px rgba(90, 150, 215, 0.35))',
               }}
             />
+            {/* One-off light sweep, clipped to the shield bounds */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div
+                ref={sweepRef}
+                className="absolute top-0 bottom-0"
+                style={{
+                  width: '34%',
+                  left: '33%',
+                  opacity: 0,
+                  background:
+                    'linear-gradient(100deg, transparent 0%, rgba(210, 230, 250, 0.55) 50%, transparent 100%)',
+                }}
+              />
+            </div>
           </div>
         </div>
 
