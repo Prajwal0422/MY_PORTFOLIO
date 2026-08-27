@@ -401,12 +401,21 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       score = null;
     }
 
-    // Guarded, exactly-once handoff used by the timeline's final call
+    // Every completion path (timeline end, skip, fallback) funnels through
+    // one guarded handoff, and the handoff itself can only fire once.
+    let handedOff = false;
+    const safeComplete = () => {
+      if (handedOff) return;
+      handedOff = true;
+      completeRef.current();
+    };
+    let hardTimer = null;
+
     const finishNow = () => {
       if (completedRef.current) return;
       completedRef.current = true;
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
-      completeRef.current();
+      safeComplete();
     };
 
     // Skip / fallback path: fade out whatever is on screen, then hand off
@@ -417,12 +426,19 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
       if (timelineRef.current) timelineRef.current.kill();
       if (score) score.fadeOut();
       gsap.killTweensOf([container, flash, haze, glow, term, nodes, montage, ...fragments, name, tagline, sweep, ...letters]);
-      gsap.to(container, {
-        opacity: 0,
-        duration: 1.0,
-        ease: 'power2.inOut',
-        onComplete: completeRef.current,
-      });
+      // Last resort — even if the fade tween never reports back,
+      // the user must still reach Act 3.
+      hardTimer = setTimeout(safeComplete, 2500);
+      try {
+        gsap.to(container, {
+          opacity: 0,
+          duration: 1.0,
+          ease: 'power2.inOut',
+          onComplete: safeComplete,
+        });
+      } catch (e) {
+        safeComplete();
+      }
     };
     finishActRef.current = finishAct;
 
@@ -577,6 +593,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
 
     return () => {
       if (fallbackRef.current) clearTimeout(fallbackRef.current);
+      if (hardTimer) clearTimeout(hardTimer);
       tl.kill();
       gsap.killTweensOf([container, flash, haze, glow, term, nodes, montage, ...fragments, name, tagline, sweep, ...letters]);
       if (score) score.dispose();
