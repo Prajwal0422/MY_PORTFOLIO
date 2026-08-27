@@ -12,6 +12,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const hintRef = useRef(null);
   const sweepRef = useRef(null);
   const boltGroupRef = useRef(null);
+  const shockwaveRef = useRef(null);
   const energyRef = useRef(null);
   const flashRef = useRef(null);
   const afterglowRef = useRef(null);
@@ -222,6 +223,21 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     act.to(shieldRef.current, { scale: 1, rotation: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' }, 0.55);
     act.to(shieldRef.current, { x: 1.5, duration: 0.03, yoyo: true, repeat: 5, ease: 'none' }, 0.36);
     act.set(shieldRef.current, { x: 0 }, 0.58);
+
+    // Circular shockwave radiating from the shield — expands fast, fades fast
+    act.fromTo(
+      shockwaveRef.current,
+      { opacity: 0.85, scale: 0.35, xPercent: -50, yPercent: -50 },
+      {
+        opacity: 0,
+        scale: 2.4,
+        xPercent: -50,
+        yPercent: -50,
+        duration: 0.7,
+        ease: 'power2.out',
+      },
+      0.36
+    );
 
     // Short cinematic screen shake — low amplitude, fast decay, transforms only
     act.to(containerRef.current, { x: 5, y: 3, duration: 0.045, ease: 'none' }, 0.35);
@@ -465,6 +481,20 @@ const Act1Storm = ({ onComplete, isMobile }) => {
                 opacity: 0,
                 background:
                   'radial-gradient(circle, transparent 42%, rgba(150, 200, 255, 0.5) 55%, rgba(90, 150, 220, 0.18) 66%, transparent 78%)',
+              }}
+            />
+
+            {/* Impact shockwave — a single expanding, fading ring */}
+            <div
+              ref={shockwaveRef}
+              className="absolute left-1/2 top-1/2 pointer-events-none"
+              style={{
+                width: '130%',
+                height: '130%',
+                opacity: 0,
+                borderRadius: '50%',
+                border: '1.5px solid rgba(190, 220, 255, 0.85)',
+                boxShadow: '0 0 24px rgba(150, 195, 245, 0.55), inset 0 0 18px rgba(150, 195, 245, 0.3)',
               }}
             />
 
