@@ -774,12 +774,13 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
         </div>
       </div>
 
-      {/* Skip control — refined in a later commit */}
+      {/* Skip control — subtle, keyboard accessible, never over the title */}
       <button
+        type="button"
         onClick={() => finishActRef.current()}
         aria-label="Skip introduction"
         data-testid="act2-skip-button"
-        className="absolute bottom-6 right-6 z-30 px-5 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white transition-colors"
+        className="absolute bottom-6 right-6 z-30 px-4 py-2 md:px-5 md:py-2 rounded-full text-xs md:text-sm font-medium tracking-[0.18em] uppercase text-gray-300 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         style={{
           background: 'rgba(0, 10, 30, 0.6)',
           backdropFilter: 'blur(10px)',
@@ -787,7 +788,7 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
           cursor: 'pointer',
         }}
       >
-        Skip
+        Skip Intro →
       </button>
 
       {/* PYJ logo — same position as Act 1 */}
