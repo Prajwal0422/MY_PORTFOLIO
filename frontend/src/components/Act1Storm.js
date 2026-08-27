@@ -54,7 +54,6 @@ const Act1Storm = ({ onComplete, isMobile }) => {
 
   const handleClick = () => {
     if (!isReady) return;
-
     // Lightning flash effect
     const flash = document.createElement('div');
     flash.style.cssText = `
@@ -84,11 +83,17 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     });
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   return (
     <div
       ref={containerRef}
-      className="act-container relative w-full h-screen overflow-hidden cursor-pointer"
-      onClick={handleClick}
+      className="act-container relative w-full h-screen overflow-hidden"
       data-testid="act1-storm-container"
     >
       {/* Storm Background */}
@@ -112,7 +117,12 @@ const Act1Storm = ({ onComplete, isMobile }) => {
         {/* Shield - PERFECTLY CENTERED */}
         <div
           ref={shieldRef}
-          className="absolute top-1/2 left-1/2 cursor-pointer"
+          role="button"
+          tabIndex={0}
+          aria-label="Click the shield to continue"
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+          className="absolute top-1/2 left-1/2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 rounded-full"
           style={{
             filter: 'drop-shadow(0 0 30px rgba(0, 212, 255, 0.8))',
             transform: 'translate(-50%, -50%)',
@@ -144,7 +154,7 @@ const Act1Storm = ({ onComplete, isMobile }) => {
             className="text-sm md:text-base text-gray-400 font-body tracking-wide animate-pulse"
             data-testid="intro-hint"
           >
-            Click to continue
+            Click the shield
           </p>
         </div>
       </div>
