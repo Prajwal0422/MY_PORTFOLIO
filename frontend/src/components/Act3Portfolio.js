@@ -28,7 +28,7 @@ import ContactForm from './ContactForm';
 import MobileMenu from './MobileMenu';
 import Footer from './Footer';
 import { VideoOptimizer, debounce } from '../utils/performance';
-import { featuredProjects, personal } from '../data/portfolioData';
+import { featuredProjects, personal, navigation } from '../data/portfolioData';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -210,17 +210,17 @@ const Act3Portfolio = ({ isMobile }) => {
 
           {/* Professional Nav Links */}
           <ul className="hidden md:flex items-center gap-1">
-            {['Home', 'About', 'Education', 'Projects', 'Skills', 'Experience', 'Certificates', 'Contact'].map((item) => (
-              <li key={item}>
+            {navigation.map((item) => (
+              <li key={item.id}>
                 <a
-                  href={`#${item.toLowerCase()}`}
-                  className="relative px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all group rounded-lg hover:bg-cyan-500/10"
+                  href={`#${item.id}`}
+                  className="relative px-3 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all group rounded-lg hover:bg-cyan-500/10"
                   onClick={(e) => {
                     e.preventDefault();
-                    document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
-                  {item}
+                  {item.label}
                   <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 </a>
               </li>

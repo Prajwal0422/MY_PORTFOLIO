@@ -1,22 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Menu, X } from 'lucide-react';
+import { navigation } from '../data/portfolioData';
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const itemsRef = useRef([]);
 
-  const menuItems = [
-    { label: 'Home', id: 'home' },
-    { label: 'About', id: 'about' },
-    { label: 'Education', id: 'education' },
-    { label: 'Projects', id: 'projects' },
-    { label: 'Skills', id: 'skills' },
-    { label: 'Experience', id: 'experience' },
-    { label: 'Certificates', id: 'certificates' },
-    { label: 'Contact', id: 'contact' },
-  ];
+  const menuItems = navigation;
 
   useEffect(() => {
     if (isOpen) {
