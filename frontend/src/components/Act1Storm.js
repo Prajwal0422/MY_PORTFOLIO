@@ -18,6 +18,9 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const afterglowRef = useRef(null);
   const glowRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
+  // Asset failure fallbacks — Act 1 must keep working without them
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [shieldFailed, setShieldFailed] = useState(false);
   // Guard against re-entry once the activation sequence has begun
   const activatedRef = useRef(false);
   // Thunder is created lazily on the user gesture and never autoplays
@@ -433,11 +436,31 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           muted
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
+          onError={() => setVideoFailed(true)}
+          className={
+            videoFailed
+              ? 'hidden'
+              : 'absolute inset-0 w-full h-full object-cover'
+          }
           data-testid="storm-background-video"
         >
-          <source src="/assets/storm.mp4" type="video/mp4" />
+          <source
+            src="/assets/storm.mp4"
+            type="video/mp4"
+            onError={() => setVideoFailed(true)}
+          />
         </video>
+        {/* If the storm video cannot play, a dark gradient carries the scene */}
+        {videoFailed && (
+          <div
+            data-testid="storm-fallback"
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(ellipse at 50% 32%, #13203a 0%, #0a1222 45%, #04060c 100%)',
+            }}
+          />
+        )}
       </div>
 
       {/* Cinematic color grading — deep blacks, charcoal, dark blue */}
@@ -518,19 +541,40 @@ const Act1Storm = ({ onComplete, isMobile }) => {
                   'radial-gradient(circle, rgba(72,140,210,0.5) 0%, rgba(56,110,175,0.18) 45%, transparent 72%)',
               }}
             />
-            <img
-              ref={shieldRef}
-              src="/assets/shield.png"
-              alt="Shield"
-              fetchPriority="high"
-              decoding="async"
-              className="relative w-full h-auto object-contain"
-              style={{
-                // Responsive tiers: mobile stays tappable, desktop stays cinematic
-                width: isMobile ? 'min(65vw, 340px)' : 'clamp(220px, 28vw, 440px)',
-                filter: 'drop-shadow(0 0 18px rgba(90, 150, 215, 0.35))',
-              }}
-            />
+            {!shieldFailed ? (
+              <img
+                ref={shieldRef}
+                src="/assets/shield.png"
+                alt="Shield"
+                fetchPriority="high"
+                decoding="async"
+                onError={() => setShieldFailed(true)}
+                className="relative w-full h-auto object-contain"
+                style={{
+                  // Responsive tiers: mobile stays tappable, desktop stays cinematic
+                  width: isMobile ? 'min(65vw, 340px)' : 'clamp(220px, 28vw, 440px)',
+                  filter: 'drop-shadow(0 0 18px rgba(90, 150, 215, 0.35))',
+                }}
+              />
+            ) : (
+              // Graceful emblem if the shield image fails — still clickable
+              <div
+                ref={shieldRef}
+                data-testid="shield-fallback"
+                role="img"
+                aria-label="Shield"
+                className="relative rounded-full"
+                style={{
+                  width: isMobile ? 'min(65vw, 340px)' : 'clamp(220px, 28vw, 440px)',
+                  aspectRatio: '1 / 1',
+                  background:
+                    'radial-gradient(circle at 50% 42%, rgba(120, 170, 225, 0.35) 0%, rgba(50, 90, 140, 0.25) 55%, rgba(15, 28, 48, 0.9) 100%)',
+                  border: '1px solid rgba(150, 195, 245, 0.35)',
+                  boxShadow:
+                    '0 0 40px rgba(90, 150, 215, 0.35), inset 0 0 60px rgba(90, 150, 215, 0.25)',
+                }}
+              />
+            )}
             {/* One-off light sweep, clipped to the shield bounds */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div
@@ -652,6 +696,10 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           src="/assets/logo.png"
           alt="Logo"
           decoding="async"
+          onError={(e) => {
+            // A broken logo icon would hurt the frame more than no logo
+            e.currentTarget.style.display = 'none';
+          }}
           className="w-12 h-12 md:w-16 md:h-16 object-contain opacity-80"
         />
       </div>
