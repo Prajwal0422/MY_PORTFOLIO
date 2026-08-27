@@ -6,6 +6,8 @@ const Act1Storm = ({ onComplete, isMobile }) => {
   const videoRef = useRef(null);
   const stormMotionRef = useRef(null);
   const shieldOuterRef = useRef(null);
+  const shieldRef = useRef(null);
+  const shieldGlowRef = useRef(null);
   const introTextRef = useRef(null);
   const hintRef = useRef(null);
   const glowRef = useRef(null);
@@ -15,6 +17,8 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     const video = videoRef.current;
     const stormMotion = stormMotionRef.current;
     const shieldOuter = shieldOuterRef.current;
+    const shield = shieldRef.current;
+    const shieldGlow = shieldGlowRef.current;
     const introText = introTextRef.current;
     const hint = hintRef.current;
     const glow = glowRef.current;
@@ -67,6 +71,43 @@ const Act1Storm = ({ onComplete, isMobile }) => {
       1.9
     );
 
+    // Idle: heavy, slow breathing — tiny drift and rotation that never
+    // line up, so the movement never feels robotic.
+    gsap.to(shield, {
+      y: -4,
+      rotation: 0.3,
+      duration: 7,
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+      delay: 2,
+    });
+    gsap.to(shield, {
+      rotation: -0.2,
+      duration: 11.3,
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+      delay: 4.2,
+    });
+
+    // Subtle blue glow pulse, deliberately off-sync with the breathing
+    gsap.fromTo(
+      shieldGlow,
+      { opacity: 0.45, scale: 0.98, xPercent: -50, yPercent: -50 },
+      {
+        opacity: 0.75,
+        scale: 1.04,
+        xPercent: -50,
+        yPercent: -50,
+        duration: 5.6,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+        delay: 2,
+      }
+    );
+
     // Almost imperceptible camera drift through the clouds
     gsap.fromTo(
       stormMotion,
@@ -93,7 +134,16 @@ const Act1Storm = ({ onComplete, isMobile }) => {
 
     return () => {
       tl.kill();
-      gsap.killTweensOf([video, stormMotion, shieldOuter, introText, hint, glow]);
+      gsap.killTweensOf([
+        video,
+        stormMotion,
+        shieldOuter,
+        shield,
+        shieldGlow,
+        introText,
+        hint,
+        glow,
+      ]);
       if (video) video.pause();
     };
   }, []);
@@ -206,14 +256,27 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           style={{ transform: 'translate(-50%, -50%)' }}
           data-testid="shield-element"
         >
-          <div ref={shieldOuterRef}>
+          <div ref={shieldOuterRef} className="relative">
+            {/* Soft glow that follows the shield silhouette */}
+            <div
+              ref={shieldGlowRef}
+              className="absolute left-1/2 top-1/2 pointer-events-none"
+              style={{
+                width: '135%',
+                height: '135%',
+                background:
+                  'radial-gradient(circle, rgba(72,140,210,0.5) 0%, rgba(56,110,175,0.18) 45%, transparent 72%)',
+              }}
+            />
             <img
+              ref={shieldRef}
               src="/assets/shield.png"
               alt="Shield"
-              className="w-full h-auto object-contain"
+              className="relative w-full h-auto object-contain"
               style={{
                 // Responsive tiers: mobile stays tappable, desktop stays cinematic
                 width: isMobile ? 'min(65vw, 340px)' : 'clamp(220px, 28vw, 440px)',
+                filter: 'drop-shadow(0 0 18px rgba(90, 150, 215, 0.35))',
               }}
             />
           </div>
