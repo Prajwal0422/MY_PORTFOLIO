@@ -130,12 +130,14 @@ const createAct2Score = () => {
   master.connect(ctx.destination);
 
   const nodes = [];
+  let closed = false;
   const track = (node) => {
     nodes.push(node);
     return node;
   };
 
   const dispose = () => {
+    closed = true;
     try {
       nodes.forEach((n) => {
         try {
@@ -158,6 +160,7 @@ const createAct2Score = () => {
 
   // Skip path: dissolve the score quickly instead of cutting it off
   const fadeOut = () => {
+    if (closed) return;
     try {
       const now = ctx.currentTime;
       master.gain.cancelScheduledValues(now);
@@ -171,6 +174,9 @@ const createAct2Score = () => {
 
   const start = () =>
     ctx.resume().then(() => {
+      // StrictMode double-effects or early skip can close the context
+      // before this promise resolves — never build nodes on a dead context.
+      if (closed || ctx.state !== 'running') return;
       const t0 = ctx.currentTime + 0.05;
 
       // Ambience: two detuned low sines, very quiet
