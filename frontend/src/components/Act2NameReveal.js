@@ -318,6 +318,9 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
   useEffect(() => {
     const canvas = particleCanvasRef.current;
     if (!canvas) return undefined;
+    // Reduced motion: no drifting particle field at all
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return undefined;
     const ctx = canvas.getContext('2d');
     if (!ctx) return undefined;
 
@@ -467,6 +470,40 @@ const Act2NameReveal = ({ onComplete, isMobile }) => {
 
     const tl = gsap.timeline();
     timelineRef.current = tl;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduced) {
+      // REDUCED MOTION — readable, calm, still completes.
+      // Simple opacity crossfades only: no wipes, no camera drift,
+      // no letter tracking shifts, no sweep.
+      tl.fromTo(container, { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0);
+      tl.fromTo(term, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 1.0);
+      tl.to(term, { autoAlpha: 0, duration: 0.4 }, 2.3);
+      const activeFragments = fragments.slice(0, isMobile ? 3 : 5);
+      activeFragments.forEach((frag, i) => {
+        if (!frag) return;
+        const pos = 2.6 + i * 0.55;
+        tl.fromTo(frag, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.25 }, pos);
+        tl.to(frag, { autoAlpha: 0, duration: 0.25 }, pos + 0.3);
+      });
+      tl.fromTo(name, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, 5.6);
+      letters.forEach((letter) => {
+        if (!letter) return;
+        gsap.set(letter, { autoAlpha: 1 });
+      });
+      tl.fromTo(tagline, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5 }, 6.4);
+      tl.to(container, { opacity: 0, duration: 1.0, ease: 'power2.inOut' }, 8.8);
+      tl.call(finishNow, null, 9.9);
+      fallbackRef.current = setTimeout(finishAct, 16000);
+
+      return () => {
+        if (fallbackRef.current) clearTimeout(fallbackRef.current);
+        if (hardTimer) clearTimeout(hardTimer);
+        tl.kill();
+        gsap.killTweensOf([container, term, ...fragments, name, tagline]);
+        if (score) score.dispose();
+      };
+    }
 
     // BEAT 1 — AFTER THE STORM (0.0–1.0s)
     // Act 1's final flash becomes Act 2's first frame, then collapses
