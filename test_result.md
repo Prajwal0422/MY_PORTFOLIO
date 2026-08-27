@@ -175,6 +175,44 @@
         -agent: "main"
         -comment: "Bundle contains honest heatmap fallback text, mailto contact for prajuyjain2204as@gmail.com, and aria-modal project dialog. No mock data remains."
 
+## phase_2a_tests:
+  run_at: "2026-08-27"
+  environment: "Windows 25H2, Chrome via browser-use MCP (tab visible for most checks), dev server localhost:3000, production build npx craco build"
+  results:
+    - test: "Production build"
+      result: PASS
+      detail: "npx craco build compiled successfully; 144.6 kB JS / 12.76 kB CSS gzipped (was 141.64/12.75 in Phase 1 — cinematic features add ~3 kB)."
+    - test: "Asset serving"
+      result: PASS
+      detail: "HEAD 200 for /assets/storm.mp4 (video/mp4), thunder.mp3 (audio/mpeg), shield.png, logo.png, and / (text/html)."
+    - test: "Act 1 mount (desktop)"
+      result: PASS
+      detail: "shield-element present with role=button, tabindex=0, aria-label 'Click the shield to continue'; touch-action: manipulation; -webkit-tap-highlight-color: transparent; shield img fetchpriority=high decoding=async naturalWidth=500; video muted/autoplay/loop/preload=auto readyState=4 no error; no storm-fallback needed; hint 'Click the shield'; intro quote intact; logo present; no horizontal scrollbar."
+    - test: "Shield click -> Act 2 transition"
+      result: PASS
+      detail: "shield.click() ran the full cinematic activation (energy, lightning, thunder hook, shockwave, flash) and Act 1 unmounted; #act2-skip-button appeared (Act 2 mounted). Tab visibilityState was 'visible' during this run."
+    - test: "Keyboard activation (SPACE)"
+      result: PASS
+      detail: "shield.focus() succeeded (activeElement === shield); dispatched keydown ' ' activated Act 1; Act 1 unmounted and flow advanced through Act 2 into Act 3 (portfolio nav + hero visible)."
+    - test: "Background click safety"
+      result: PASS
+      detail: "click dispatched on act1-storm-container (not shield) left Act 1 mounted; only the shield activates."
+    - test: "Custom cursor (fine pointer)"
+      result: PASS
+      detail: "Two cursor layers (ring wrapper z-10000 + dot z-10001) mounted on pointer:fine desktop; App.js now gates the cursor on matchMedia('(pointer: fine)') instead of width; rAF loop uses translate3d only and cancels the live frame id on unmount."
+    - test: "Visual still"
+      result: PASS
+      detail: "test_reports/phase2a-act1-ready.png shows storm background, PYJ logo top-left, centered shield, 'Before the storm... there is silence' + 'CLICK THE SHIELD'."
+    - test: "Console hygiene"
+      result: PASS
+      detail: "Only pre-existing errors: WDS_SOCKET_PORT=443 WebSocket refused (dev config) and GitHub heatmap fetch (network-dependent, has fallback). No GSAP, React or Act 1 errors."
+    - test: "Reduced motion / mobile emulation"
+      result: CODE-VERIFIED
+      detail: "browser-use MCP cannot flip prefers-reduced-motion or pointer media at runtime. Verified by code: reduced-motion branch swaps entrance to plain fades, skips idle/drift/shake/flicker/rotation and lowers flash to 0.3 while keeping click/keyboard activation intact; touch devices get no cursor (pointer:fine gate), touch-action manipulation and press feedback."
+    - test: "Asset failure fallbacks"
+      result: CODE-VERIFIED
+      detail: "video onError -> dark radial gradient (storm-fallback) with shield/interaction/lightning/transition intact; shield img onError -> CSS emblem keeps role/size/clickability; logo onError hides broken icon; thunder failures already swallowed silently."
+
 ## metadata:
   created_by: "main_agent"
   version: "1.0"
