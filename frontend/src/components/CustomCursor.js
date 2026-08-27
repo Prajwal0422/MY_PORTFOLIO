@@ -33,6 +33,12 @@ const CustomCursor = () => {
     const dot = cursorDotRef.current;
     if (!wrapper || !ring || !ticks || !dot) return;
 
+    // Under reduced motion the cursor still works, but it tracks instantly
+    // with no lag trail, rotation or press pulse.
+    const reduced =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const onMouseMove = (e) => {
       mousePos.current.x = e.clientX;
       mousePos.current.y = e.clientY;
@@ -53,7 +59,7 @@ const CustomCursor = () => {
 
     // Tiny elastic pulse on press — decays inside the rAF loop
     const onMouseDown = () => {
-      rippleRef.current = 1.4;
+      if (!reduced) rippleRef.current = 1.4;
     };
 
     // Only touch styles that actually change per mode (cheap properties),
@@ -84,14 +90,17 @@ const CustomCursor = () => {
     const animate = () => {
       // Dot tracks the pointer instantly
       const dotScale = modeRef.current === 'shield' ? 1.5 : 1;
-      dotScaleRef.current += (dotScale - dotScaleRef.current) * 0.2;
+      dotScaleRef.current = reduced
+        ? dotScale
+        : dotScaleRef.current + (dotScale - dotScaleRef.current) * 0.2;
       dot.style.transform = `translate3d(${mousePos.current.x - DOT_SIZE / 2}px, ${
         mousePos.current.y - DOT_SIZE / 2
       }px, 0) scale(${dotScaleRef.current})`;
 
-      // Ring trails with a soft lag — GPU transform only
-      cursorPos.current.x += (mousePos.current.x - cursorPos.current.x) * 0.18;
-      cursorPos.current.y += (mousePos.current.y - cursorPos.current.y) * 0.18;
+      // Ring trails with a soft lag — GPU transform only (instant if reduced)
+      const lag = reduced ? 1 : 0.18;
+      cursorPos.current.x += (mousePos.current.x - cursorPos.current.x) * lag;
+      cursorPos.current.y += (mousePos.current.y - cursorPos.current.y) * lag;
       wrapper.style.transform = `translate3d(${cursorPos.current.x - RING_SIZE / 2}px, ${
         cursorPos.current.y - RING_SIZE / 2
       }px, 0)`;
@@ -105,11 +114,13 @@ const CustomCursor = () => {
       // Ring hides away in default state; grows over interactives;
       // expands and slowly rotates into a targeting reticle over the shield.
       const targetScale = mode === 'shield' ? 1.3 : mode === 'interactive' ? 1 : 0;
-      scaleRef.current += (targetScale - scaleRef.current) * 0.2;
+      scaleRef.current = reduced
+        ? targetScale
+        : scaleRef.current + (targetScale - scaleRef.current) * 0.2;
       rippleRef.current += (1 - rippleRef.current) * 0.12;
       ring.style.opacity = scaleRef.current < 0.05 ? '0' : '1';
 
-      if (mode === 'shield') {
+      if (mode === 'shield' && !reduced) {
         rotationRef.current = (rotationRef.current + 0.35) % 360;
       }
       ring.style.transform = `rotate(${rotationRef.current}deg) scale(${

@@ -27,8 +27,17 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     typeof window !== 'undefined' &&
     typeof window.matchMedia === 'function' &&
     window.matchMedia('(pointer: fine)').matches;
+  // Respect prefers-reduced-motion: calmer visuals, same working interaction
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
+    // Local copy so the mount effect never depends on render-scope values
+    const reduced =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const video = videoRef.current;
     const stormMotion = stormMotionRef.current;
     const shieldOuter = shieldOuterRef.current;
@@ -49,32 +58,38 @@ const Act1Storm = ({ onComplete, isMobile }) => {
       { opacity: 1, duration: 1.2, ease: 'power2.inOut' }
     );
 
-    // 0.4s → the shield begins emerging from the storm
-    tl.set(shieldOuter, { opacity: 0, scale: 0.88, y: 28, filter: 'blur(10px)' }, 0.4);
-    tl.to(
-      shieldOuter,
-      { opacity: 0.5, duration: 0.4, ease: 'power1.in' },
-      0.4
-    );
+    // 0.4s → the shield begins emerging from the storm.
+    // With reduced motion it is a quiet fade — no drift, scale or blur.
+    if (reduced) {
+      tl.set(shieldOuter, { opacity: 0 }, 0.4);
+      tl.to(shieldOuter, { opacity: 1, duration: 0.8, ease: 'power1.inOut' }, 0.4);
+    } else {
+      tl.set(shieldOuter, { opacity: 0, scale: 0.88, y: 28, filter: 'blur(10px)' }, 0.4);
+      tl.to(
+        shieldOuter,
+        { opacity: 0.5, duration: 0.4, ease: 'power1.in' },
+        0.4
+      );
 
-    // 0.8s → shield reaches ~50% opacity, keeps emerging
-    tl.to(
-      shieldOuter,
-      {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        filter: 'blur(0px)',
-        duration: 0.7,
-        ease: 'power2.out',
-      },
-      0.8
-    );
+      // 0.8s → shield reaches ~50% opacity, keeps emerging
+      tl.to(
+        shieldOuter,
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.7,
+          ease: 'power2.out',
+        },
+        0.8
+      );
+    }
 
     // 1.1s → the primary line fades upward after the shield begins appearing
     tl.fromTo(
       introText,
-      { opacity: 0, y: 24 },
+      reduced ? { opacity: 0 } : { opacity: 0, y: 24 },
       { opacity: 1, y: 0, duration: 1.4, ease: 'power2.out' },
       1.1
     );
@@ -87,64 +102,68 @@ const Act1Storm = ({ onComplete, isMobile }) => {
       1.9
     );
 
-    // Idle: heavy, slow breathing — tiny drift and rotation that never
-    // line up, so the movement never feels robotic.
-    gsap.to(shield, {
-      y: -4,
-      rotation: 0.3,
-      duration: 7,
-      ease: 'sine.inOut',
-      repeat: -1,
-      yoyo: true,
-      delay: 2,
-    });
-    gsap.to(shield, {
-      rotation: -0.2,
-      duration: 11.3,
-      ease: 'sine.inOut',
-      repeat: -1,
-      yoyo: true,
-      delay: 4.2,
-    });
-
-    // Subtle blue glow pulse, deliberately off-sync with the breathing
-    gsap.fromTo(
-      shieldGlow,
-      { opacity: 0.45, scale: 0.98, xPercent: -50, yPercent: -50 },
-      {
-        opacity: 0.75,
-        scale: 1.04,
-        xPercent: -50,
-        yPercent: -50,
-        duration: 5.6,
+    // Idle motion and camera drift are skipped entirely under reduced
+    // motion — the shield stays still, the storm stays calm.
+    if (!reduced) {
+      // Idle: heavy, slow breathing — tiny drift and rotation that never
+      // line up, so the movement never feels robotic.
+      gsap.to(shield, {
+        y: -4,
+        rotation: 0.3,
+        duration: 7,
         ease: 'sine.inOut',
         repeat: -1,
         yoyo: true,
         delay: 2,
-      }
-    );
-
-    // Almost imperceptible camera drift through the clouds
-    gsap.fromTo(
-      stormMotion,
-      { scale: 1.04, xPercent: -0.6, yPercent: -0.4 },
-      {
-        scale: 1.09,
-        xPercent: 0.6,
-        yPercent: 0.4,
-        duration: 40,
+      });
+      gsap.to(shield, {
+        rotation: -0.2,
+        duration: 11.3,
         ease: 'sine.inOut',
         repeat: -1,
         yoyo: true,
-      }
-    );
+        delay: 4.2,
+      });
 
-    // Soft breathing of the ambient light behind the shield
-    gsap.fromTo(
-      glow,
-      { opacity: 0.35 },
-      { opacity: 0.55, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true }
-    );
+      // Subtle blue glow pulse, deliberately off-sync with the breathing
+      gsap.fromTo(
+        shieldGlow,
+        { opacity: 0.45, scale: 0.98, xPercent: -50, yPercent: -50 },
+        {
+          opacity: 0.75,
+          scale: 1.04,
+          xPercent: -50,
+          yPercent: -50,
+          duration: 5.6,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+          delay: 2,
+        }
+      );
+
+      // Almost imperceptible camera drift through the clouds
+      gsap.fromTo(
+        stormMotion,
+        { scale: 1.04, xPercent: -0.6, yPercent: -0.4 },
+        {
+          scale: 1.09,
+          xPercent: 0.6,
+          yPercent: 0.4,
+          duration: 40,
+          ease: 'sine.inOut',
+          repeat: -1,
+          yoyo: true,
+        }
+      );
+
+      // Soft breathing of the ambient light behind the shield
+      gsap.fromTo(
+        glow,
+        { opacity: 0.35 },
+        { opacity: 0.55, duration: 5, ease: 'sine.inOut', repeat: -1, yoyo: true }
+      );
+    }
 
     setIsReady(true);
 
@@ -202,89 +221,104 @@ const Act1Storm = ({ onComplete, isMobile }) => {
     // the impact physics owns the shield transform from here on.
     gsap.killTweensOf([shieldRef.current, shieldGlowRef.current]);
 
-    // 0.0–0.35s — energy builds around the shield
-    act.to(
-      energyRef.current,
-      { opacity: 0.85, scale: 1.05, xPercent: -50, yPercent: -50, duration: 0.35, ease: 'power2.in' },
-      0
-    );
-    act.to(
-      shieldGlowRef.current,
-      { opacity: 1, duration: 0.3, ease: 'power2.in' },
-      0
-    );
+    if (prefersReducedMotion) {
+      // Reduced motion: the interaction still works, but the impact is a
+      // calm pulse and a single soft flash — no shake, flicker or sparks.
+      act.to(shieldGlowRef.current, { opacity: 0.9, duration: 0.3, ease: 'power1.inOut' }, 0);
+      act.to(shieldRef.current, { scale: 0.985, duration: 0.15, ease: 'power1.out' }, 0.05);
+      act.to(shieldRef.current, { scale: 1, duration: 0.4, ease: 'power2.out' }, 0.2);
+      act.fromTo(
+        flashRef.current,
+        { opacity: 0 },
+        { opacity: 0.3, duration: 0.18, ease: 'power1.out' },
+        0.1
+      );
+      act.to(flashRef.current, { opacity: 0, duration: 0.4, ease: 'power1.inOut' }, 0.3);
+    } else {
+      // 0.0–0.35s — energy builds around the shield
+      act.to(
+        energyRef.current,
+        { opacity: 0.85, scale: 1.05, xPercent: -50, yPercent: -50, duration: 0.35, ease: 'power2.in' },
+        0
+      );
+      act.to(
+        shieldGlowRef.current,
+        { opacity: 1, duration: 0.3, ease: 'power2.in' },
+        0
+      );
 
-    // 0.35s — IMPACT: localized electric burst + lightning branches
+      // Shield impact physics: massive compression, recoil, brief vibration
+      act.to(shieldRef.current, { scale: 0.97, rotation: -1, duration: 0.08, ease: 'power3.in' }, 0.35);
+      act.to(shieldRef.current, { scale: 1.015, rotation: 0.4, duration: 0.12, ease: 'power2.out' }, 0.43);
+      act.to(shieldRef.current, { scale: 1, rotation: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' }, 0.55);
+      act.to(shieldRef.current, { x: 1.5, duration: 0.03, yoyo: true, repeat: 5, ease: 'none' }, 0.36);
+      act.set(shieldRef.current, { x: 0 }, 0.58);
+
+      // Circular shockwave radiating from the shield — expands fast, fades fast
+      act.fromTo(
+        shockwaveRef.current,
+        { opacity: 0.85, scale: 0.35, xPercent: -50, yPercent: -50 },
+        {
+          opacity: 0,
+          scale: 2.4,
+          xPercent: -50,
+          yPercent: -50,
+          duration: 0.7,
+          ease: 'power2.out',
+        },
+        0.36
+      );
+
+      // Short cinematic screen shake — low amplitude, fast decay, transforms only
+      act.to(containerRef.current, { x: 5, y: 3, duration: 0.045, ease: 'none' }, 0.35);
+      act.to(containerRef.current, { x: -4, y: -2, duration: 0.05, ease: 'none' }, 0.395);
+      act.to(containerRef.current, { x: 3, y: 2, duration: 0.055, ease: 'none' }, 0.445);
+      act.to(containerRef.current, { x: -2, y: -1, duration: 0.06, ease: 'none' }, 0.5);
+      act.to(containerRef.current, { x: 1, y: 0.5, duration: 0.07, ease: 'none' }, 0.56);
+      act.to(containerRef.current, { x: 0, y: 0, duration: 0.1, ease: 'power1.out' }, 0.63);
+
+      act.fromTo(
+        energyRef.current,
+        { opacity: 0.85 },
+        { opacity: 1, duration: 0.06, yoyo: true, repeat: 1, ease: 'none' },
+        0.35
+      );
+      act.to(
+        boltGroupRef.current,
+        { opacity: 1, rotation: 0.6, xPercent: -50, yPercent: -50, duration: 0.05, ease: 'none' },
+        0.35
+      );
+      act.to(boltGroupRef.current, { opacity: 0.25, duration: 0.05, ease: 'none' }, 0.43);
+      act.to(boltGroupRef.current, { opacity: 0.85, duration: 0.04, ease: 'none' }, 0.5);
+      act.to(boltGroupRef.current, { opacity: 0, duration: 0.2, ease: 'power1.out' }, 0.56);
+      act.to(
+        energyRef.current,
+        { opacity: 0, scale: 1.3, duration: 0.5, ease: 'power2.out' },
+        0.58
+      );
+
+      // Full-screen flash — short, bright, controlled (never a stuck white frame)
+      act.fromTo(
+        flashRef.current,
+        { opacity: 0 },
+        { opacity: 0.92, duration: 0.07, ease: 'power2.out' },
+        0.36
+      );
+      act.to(flashRef.current, { opacity: 0.15, duration: 0.1, ease: 'power1.in' }, 0.45);
+      act.to(flashRef.current, { opacity: 0, duration: 0.3, ease: 'power1.out' }, 0.62);
+
+      // Afterglow lingers briefly as the storm recovers
+      act.fromTo(
+        afterglowRef.current,
+        { opacity: 0 },
+        { opacity: 0.22, duration: 0.12, ease: 'power1.out' },
+        0.5
+      );
+      act.to(afterglowRef.current, { opacity: 0, duration: 0.8, ease: 'power1.inOut' }, 0.7);
+    }
+
+    // 0.35s — IMPACT: thunder plays exactly at the visual strike
     playThunder();
-
-    // Shield impact physics: massive compression, recoil, brief vibration
-    act.to(shieldRef.current, { scale: 0.97, rotation: -1, duration: 0.08, ease: 'power3.in' }, 0.35);
-    act.to(shieldRef.current, { scale: 1.015, rotation: 0.4, duration: 0.12, ease: 'power2.out' }, 0.43);
-    act.to(shieldRef.current, { scale: 1, rotation: 0, duration: 0.5, ease: 'elastic.out(1, 0.5)' }, 0.55);
-    act.to(shieldRef.current, { x: 1.5, duration: 0.03, yoyo: true, repeat: 5, ease: 'none' }, 0.36);
-    act.set(shieldRef.current, { x: 0 }, 0.58);
-
-    // Circular shockwave radiating from the shield — expands fast, fades fast
-    act.fromTo(
-      shockwaveRef.current,
-      { opacity: 0.85, scale: 0.35, xPercent: -50, yPercent: -50 },
-      {
-        opacity: 0,
-        scale: 2.4,
-        xPercent: -50,
-        yPercent: -50,
-        duration: 0.7,
-        ease: 'power2.out',
-      },
-      0.36
-    );
-
-    // Short cinematic screen shake — low amplitude, fast decay, transforms only
-    act.to(containerRef.current, { x: 5, y: 3, duration: 0.045, ease: 'none' }, 0.35);
-    act.to(containerRef.current, { x: -4, y: -2, duration: 0.05, ease: 'none' }, 0.395);
-    act.to(containerRef.current, { x: 3, y: 2, duration: 0.055, ease: 'none' }, 0.445);
-    act.to(containerRef.current, { x: -2, y: -1, duration: 0.06, ease: 'none' }, 0.5);
-    act.to(containerRef.current, { x: 1, y: 0.5, duration: 0.07, ease: 'none' }, 0.56);
-    act.to(containerRef.current, { x: 0, y: 0, duration: 0.1, ease: 'power1.out' }, 0.63);
-
-    act.fromTo(
-      energyRef.current,
-      { opacity: 0.85 },
-      { opacity: 1, duration: 0.06, yoyo: true, repeat: 1, ease: 'none' },
-      0.35
-    );
-    act.to(
-      boltGroupRef.current,
-      { opacity: 1, rotation: 0.6, xPercent: -50, yPercent: -50, duration: 0.05, ease: 'none' },
-      0.35
-    );
-    act.to(boltGroupRef.current, { opacity: 0.25, duration: 0.05, ease: 'none' }, 0.43);
-    act.to(boltGroupRef.current, { opacity: 0.85, duration: 0.04, ease: 'none' }, 0.5);
-    act.to(boltGroupRef.current, { opacity: 0, duration: 0.2, ease: 'power1.out' }, 0.56);
-    act.to(
-      energyRef.current,
-      { opacity: 0, scale: 1.3, duration: 0.5, ease: 'power2.out' },
-      0.58
-    );
-
-    // Full-screen flash — short, bright, controlled (never a stuck white frame)
-    act.fromTo(
-      flashRef.current,
-      { opacity: 0 },
-      { opacity: 0.92, duration: 0.07, ease: 'power2.out' },
-      0.36
-    );
-    act.to(flashRef.current, { opacity: 0.15, duration: 0.1, ease: 'power1.in' }, 0.45);
-    act.to(flashRef.current, { opacity: 0, duration: 0.3, ease: 'power1.out' }, 0.62);
-
-    // Afterglow lingers briefly as the storm recovers
-    act.fromTo(
-      afterglowRef.current,
-      { opacity: 0 },
-      { opacity: 0.22, duration: 0.12, ease: 'power1.out' },
-      0.5
-    );
-    act.to(afterglowRef.current, { opacity: 0, duration: 0.8, ease: 'power1.inOut' }, 0.7);
 
     // Cinematic transition: light fills the screen, then the storm
     // disappears into darkness and Act 2 begins.
