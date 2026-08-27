@@ -431,8 +431,24 @@ const Act1Storm = ({ onComplete, isMobile }) => {
           onKeyDown={handleKeyDown}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={() => {
+            // Gentle press feedback on touch — hover never fires there
+            if (!activatedRef.current) {
+              gsap.to(shieldRef.current, { scale: 0.985, duration: 0.25, ease: 'power1.out' });
+            }
+          }}
+          onTouchEnd={() => {
+            if (!activatedRef.current) {
+              gsap.to(shieldRef.current, { scale: 1, duration: 0.4, ease: 'power2.out' });
+            }
+          }}
           className="absolute top-1/2 left-1/2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 rounded-full"
-          style={{ transform: 'translate(-50%, -50%)' }}
+          style={{
+            transform: 'translate(-50%, -50%)',
+            // Reliable taps: no 300ms delay, no double-tap zoom, no blue flash
+            touchAction: 'manipulation',
+            WebkitTapHighlightColor: 'transparent',
+          }}
           data-testid="shield-element"
         >
           <div ref={shieldOuterRef} className="relative">

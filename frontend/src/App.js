@@ -9,6 +9,7 @@ import Preloader from '@/components/Preloader';
 function App() {
   const [currentAct, setCurrentAct] = useState(0); // Start with 0 for preloader
   const [isMobile, setIsMobile] = useState(false);
+  const [hasFinePointer, setHasFinePointer] = useState(false);
 
   useEffect(() => {
     // Detect mobile devices
@@ -20,6 +21,22 @@ function App() {
     window.addEventListener('resize', checkMobile);
     
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // The custom cursor only makes sense with a real pointer — detect the
+    // capability properly instead of relying on screen width alone.
+    if (typeof window.matchMedia !== 'function') return;
+    const query = window.matchMedia('(pointer: fine)');
+    const update = () => setHasFinePointer(query.matches);
+    update();
+    if (typeof query.addEventListener === 'function') {
+      query.addEventListener('change', update);
+      return () => query.removeEventListener('change', update);
+    }
+    // Older Safari fallback
+    query.addListener(update);
+    return () => query.removeListener(update);
   }, []);
 
   const handlePreloaderComplete = () => {
@@ -36,8 +53,8 @@ function App() {
 
   return (
     <div className="App">
-      {/* Custom cursor - only on desktop */}
-      {!isMobile && <CustomCursor />}
+      {/* Custom cursor — only when a fine pointer is available */}
+      {hasFinePointer && <CustomCursor />}
       
       {/* Preloader */}
       {currentAct === 0 && (
