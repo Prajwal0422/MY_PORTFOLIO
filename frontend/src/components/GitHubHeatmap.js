@@ -10,6 +10,7 @@ const GitHubHeatmap = ({ username = 'Prajwal0422' }) => {
   const [contributions, setContributions] = useState([]);
   const [stats, setStats] = useState({ total: 0, streak: 0 });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetchGitHubData();
@@ -95,10 +96,11 @@ const GitHubHeatmap = ({ username = 'Prajwal0422' }) => {
           },
         });
       }
-    } catch (error) {
-      console.error('Error fetching GitHub data:', error);
-      // Fallback to mock data
-      generateMockData();
+    } catch (err) {
+      console.error('Error fetching GitHub data:', err);
+      // Never fall back to mock numbers — show an honest message instead.
+      setError(true);
+      setLoading(false);
     }
   };
 
@@ -114,34 +116,6 @@ const GitHubHeatmap = ({ username = 'Prajwal0422' }) => {
     return currentStreak;
   };
 
-  const generateMockData = () => {
-    const data = [];
-    const today = new Date();
-    let totalContributions = 0;
-
-    for (let i = 364; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const count = Math.floor(Math.random() * 10);
-      totalContributions += count;
-      
-      data.push({
-        date: date,
-        count: count,
-        week: Math.floor(i / 7),
-        day: date.getDay(),
-      });
-    }
-
-    setContributions(data);
-    setStats({
-      total: totalContributions,
-      streak: Math.floor(Math.random() * 30),
-      repos: 25,
-    });
-    setLoading(false);
-  };
-
   const getColor = (count) => {
     if (count === 0) return 'rgba(30, 30, 30, 0.5)';
     if (count <= 2) return 'rgba(0, 212, 255, 0.2)';
@@ -154,6 +128,29 @@ const GitHubHeatmap = ({ username = 'Prajwal0422' }) => {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-cyan-400 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div
+        className="glass rounded-3xl p-8 text-center"
+        style={{
+          background: 'rgba(0, 20, 40, 0.6)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(0, 212, 255, 0.3)',
+        }}
+      >
+        <p className="text-gray-300 mb-2">GitHub activity unavailable right now.</p>
+        <a
+          href={`https://github.com/${username}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+        >
+          View @{username} on GitHub
+        </a>
       </div>
     );
   }
